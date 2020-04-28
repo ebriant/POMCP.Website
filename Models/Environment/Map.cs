@@ -39,7 +39,7 @@ namespace POMCP.Website.Models.Environment
 			Cells[obstacle.X,obstacle.Y] = obstacle;
 		}
 
-		public IEnumerable<Cell> GetWallsList()
+		public IEnumerable<IEnumerable<Cell>> GetWallsList()
 		{
 			List<Cell> result = new List<Cell>();
 			for (int i = 0; i < Dx; i++)
@@ -53,7 +53,9 @@ namespace POMCP.Website.Models.Environment
 				}
 			}
 
-			return result;
+			Cell[,] test = new Cell[1,2];
+			Cell[][] test2 = new Cell[][] { };
+			return test2;
 		}
 
 		public Cell[][] GetCellsArray()

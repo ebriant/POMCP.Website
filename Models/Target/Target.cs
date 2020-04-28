@@ -1,10 +1,9 @@
-﻿﻿namespace POMCP.Website.Models.Target
+﻿﻿using POMCP.Website.Models.Environment;
+
+ namespace POMCP.Website.Models.Target
 {
-    public class Target
+    public class Target : Cell
     {
-        public int X { get;}
-        public int Y { get;}
-        
         private TargetMotor _motor;
 
         /// <summary>
@@ -12,10 +11,9 @@
         /// </summary>
         /// <param name="x">initial abscissa</param>
         /// <param name="y">initial ordinate</param>
-        public Target(int x, int y)
+        public Target(int x, int y) : base(x,y)
         {
-            X = x;
-            Y = y;
+            CellType = "target";
             _motor = new TargetMotor();
         }
     }

@@ -14,5 +14,12 @@ namespace POMCP.Website.Models.Environment
             Map = map;
             Target = target;
         }
+
+        public Cell[][] GetCellsArray()
+        {
+            Cell[][] result = Map.GetCellsArray();
+            result[Target.X][Target.Y] = Target;
+            return result;
+        }
     }
 }

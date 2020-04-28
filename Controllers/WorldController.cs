@@ -43,7 +43,7 @@ namespace POMCP.Website.Controllers
             // test[0] = new Cell[1];
             // test [0][0] = new Wall(0, 0);
             // return test;
-            return WorldBuilder.DefaultWorld.Map.GetCellsArray();
+            return WorldBuilder.DefaultWorld.GetCellsArray();
         }
         
         [HttpGet]

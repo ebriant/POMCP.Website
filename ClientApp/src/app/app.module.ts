@@ -12,7 +12,6 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import {GridComponent} from "./grid/grid.component";
 import { CellComponent } from './cell/cell.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,

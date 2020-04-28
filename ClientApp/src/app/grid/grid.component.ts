@@ -59,6 +59,9 @@ export class GridComponent implements OnInit {
       case "glass": {
         return "#05F2F2";
       }
+      case "target": {
+        return "#4B7E12";
+      }
       default: {
         return "#F2F2F2";
       }
