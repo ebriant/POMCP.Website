@@ -1,0 +1,8 @@
+<table id="board">
+  <tr *ngFor="let y of ordinateArray()">
+    <td *ngFor="let x of abscissaArray()" class="cell" [style.background-color]="getCellColor(x,y)">
+    </td>
+  </tr>
+</table>
+
+

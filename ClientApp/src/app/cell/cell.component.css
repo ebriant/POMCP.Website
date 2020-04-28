@@ -1,0 +1,9 @@
+.emptyCell {
+  width: 30px;
+  height: 30px;
+  background-color: #002959;
+  border: 1px solid black;
+}
+
+:host {
+}
