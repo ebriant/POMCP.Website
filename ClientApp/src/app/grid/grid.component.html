@@ -1,8 +1,14 @@
+<button type="button" mdbBtn color="primary" class="bwaves-light" mdbTooltip="Tooltip on top" placement="top"
+        mdbWavesEffect>
+  Tooltip on top
+</button>
 
 <table id="control">
   <tr>
     <td>
-      <button type="button"><i class="fa fa-arrow-circle-o-up fa-2x"></i>
+
+      <button type="button" matTooltip="Info about the action">
+        <i class="fa fa-arrow-circle-o-left fa-2x fa-rotate-45"></i>
       </button>
     </td>
     <td>
@@ -10,7 +16,7 @@
       </button>
     </td>
     <td>
-      <button type="button"><i class="fa fa-arrow-circle-o-up fa-2x"></i>
+      <button type="button"><i class="fa fa-arrow-circle-o-up fa-2x fa-rotate-45"></i>
       </button>
     </td>
   </tr>
@@ -29,7 +35,7 @@
     </td>
   <tr>
     <td>
-      <button type="button"><i class="fa fa-arrow-circle-o-down fa-2x"></i>
+      <button type="button"><i class="fa fa-arrow-circle-o-down fa-2x fa-rotate-45"></i>
       </button>
     </td>
     <td>
@@ -37,12 +43,17 @@
       </button>
     </td>
     <td>
-      <button type="button"><i class="fa fa-arrow-circle-o-down fa-2x"></i>
+      <button type="button"><i class="fa fa-arrow-circle-o-right fa-2x fa-rotate-45"></i>
       </button>
     </td>
   </tr>
 
 </table>
+
+
+<svg height="210" width="500">
+  <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2" />
+</svg>
 
 <table id="board">
   <tr *ngFor="let y of ordinateArray()">

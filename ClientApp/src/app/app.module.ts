@@ -11,6 +11,7 @@ import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import {GridComponent} from "./grid/grid.component";
 import { CellComponent } from './cell/cell.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { CellComponent } from './cell/cell.component';
       { path: 'counter', component: GridComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       // { path: 'test', component: GridComponent},
-    ])
+    ]),
+    NoopAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

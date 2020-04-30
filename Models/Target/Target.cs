@@ -1,4 +1,6 @@
-﻿﻿using POMCP.Website.Models.Environment;
+﻿﻿using System.Collections.Generic;
+ using POMCP.Website.Models.Environment;
+ using POMCP.Website.Models.Pomcp;
 
  namespace POMCP.Website.Models.Target
 {
@@ -15,6 +17,11 @@
         {
             CellType = "target";
             _motor = new TargetMotor();
+        }
+
+        public Distribution<State> GetTransition(State currentState, List<State> l)
+        {
+            return _motor.GetTransition(currentState, l);
         }
     }
 }

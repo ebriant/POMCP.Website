@@ -1,4 +1,5 @@
 import {Component, ViewChild, ElementRef, OnInit, Inject} from '@angular/core';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {HttpClient} from "@angular/common/http";
 
 
@@ -9,7 +10,6 @@ import {HttpClient} from "@angular/common/http";
 })
 export class GridComponent implements OnInit {
 
-  private cellSize = 20;
   private xSize = 20;
   private ySize = 20;
   public cells: Cell[][];

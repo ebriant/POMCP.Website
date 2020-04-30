@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using POMCP.Website.Models;
+using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
 using POMCP.Website.Models.Target;
 
@@ -51,6 +52,13 @@ namespace POMCP.Website.Controllers
         public Target GetTarget()
         {
             return WorldBuilder.DefaultWorld.Target;
+        }
+        
+        [HttpGet]
+        [Route("camera")]
+        public IEnumerable<Camera> GetCameras()
+        {
+            return WorldBuilder.DefaultWorld.Cameras;
         }
     }
 }

@@ -21,6 +21,9 @@ namespace POMCP.Website.Models.Environment
 			AddOutsideWalls();
 		}
 		
+		/// <summary>
+		/// Add walls on the border of the map
+		/// </summary>
 		private void AddOutsideWalls()
 		{
 			for (int i = 0; i < Dx; i++)
@@ -39,23 +42,33 @@ namespace POMCP.Website.Models.Environment
 			Cells[obstacle.X,obstacle.Y] = obstacle;
 		}
 
-		public IEnumerable<IEnumerable<Cell>> GetWallsList()
-		{
-			List<Cell> result = new List<Cell>();
-			for (int i = 0; i < Dx; i++)
-			{
-				for (int j = 0; j < Dy; j++)
-				{
-					if (Cells[i, j] is Wall)
-					{
-						result.Add(Cells[i,j]);
-					}
-				}
-			}
 
-			Cell[,] test = new Cell[1,2];
-			Cell[][] test2 = new Cell[][] { };
-			return test2;
+		public Cell GetCell(int x, int y)
+		{
+			return Cells[x, y];
+		}
+
+		/// <summary>
+		/// Check if a cell is free (i.e not occupied by an obstacle)
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public bool IsCellFree(int x, int y) {
+			if (IsInMap(x, y)) {
+				return !(Cells[x,y] is Obstacle);
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Check if the coordinates are in the map
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		private bool IsInMap(int x, int y) {
+			return x >= 0 && x < Dx && y >= 0 && y < Dy;
 		}
 
 		public Cell[][] GetCellsArray()
@@ -77,7 +90,6 @@ namespace POMCP.Website.Models.Environment
 					}
 				}
 			}
-
 			return result;
 		}
 	}
