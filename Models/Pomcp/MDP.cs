@@ -34,13 +34,13 @@ namespace POMCP.Website.Models.Pomcp
         public List<Action> GetAllActions(State state)
         {
             List<Action> actionsList = null;
-            
-            foreach (Camera camera in World.Cameras)
+            for (int i = 0; i < World.Cameras.Count; i++)
             {
+                Camera camera = World.Cameras[i];
                 if (actionsList == null)
                 {
                     actionsList = new List<Action>();
-                    foreach (double o in camera.GetActions())
+                    foreach (double o in camera.GetActions(state.CamerasOrientations[i]))
                     {
                         actionsList.Add(new Action(o, World.Cameras.Count));
                     }
@@ -51,7 +51,7 @@ namespace POMCP.Website.Models.Pomcp
 
                     foreach (Action a in actionsList)
                     {
-                        foreach (double o in camera.GetActions())
+                        foreach (double o in camera.GetActions(state.CamerasOrientations[i]))
                         {
                             List<double> orient = a.Orientations;
                             orient[camera.Num] = o;

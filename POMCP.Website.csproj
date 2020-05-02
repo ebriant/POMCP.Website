@@ -20,8 +20,8 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
-    <Content Include="ClientApp\src\app\cell\cell.component.css" />
-    <Content Include="ClientApp\src\app\cell\cell.component.html" />
+    <Content Include="ClientApp\src\app\board\board.component.css" />
+    <Content Include="ClientApp\src\app\board\board.component.html" />
     <Content Include="ClientApp\src\app\grid\grid.component.css" />
     <Content Include="ClientApp\src\app\grid\grid.component.html" />
     <None Remove="$(SpaRoot)**" />

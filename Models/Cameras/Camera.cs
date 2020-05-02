@@ -39,9 +39,9 @@ namespace POMCP.Website.Models.Cameras
         /// <returns></returns>
          public abstract Distribution<Observation> GetObservation(State state);
         
-        public abstract List<double> GetActions();
+        public abstract List<double> GetActions(double angle);
 	
-        public double GetValue(State state) {
+        public virtual double GetValue(State state) {
             return GetVision(state.CamerasOrientations[Num])[state.X,state.Y] ? 1 : 0;
         }
 

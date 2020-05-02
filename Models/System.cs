@@ -1,4 +1,5 @@
-﻿using POMCP.Website.Models.Cameras;
+﻿using System.Collections.Generic;
+using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
 using POMCP.Website.Models.Pomcp;
 
@@ -6,8 +7,26 @@ namespace POMCP.Website.Models
 {
     public class System
     {
-        public World World;
-        
+
+        public static System instance;
+
+        private static System GetInstance()
+        {
+            World world = WorldBuilder.DefaultWorld;
+            Distribution<State> d = new Distribution<State>();
+            List<double> camerasOrientations = new List<double>();
+            foreach (Camera camera in world.Cameras)
+            {
+                camerasOrientations.Add(0d);
+            }
+            d.setProba(new State(7,1,camerasOrientations), 1);	
+            MDP mdp = new MDP(world);
+            return new System(world, mdp, d, 500, 3);
+        }
+
+
+        public World World { get; }
+
         private MDP _model;
         
         public Distribution<State> CurrentDistribution { get; set; }
@@ -22,29 +41,29 @@ namespace POMCP.Website.Models
 
         SamplingTree _tree;
 
-        public int samplesCount;
+        public int TreeSamplesCountCount;
 
         public int maxIteration;
 
         
-        public System(World m, MDP mdp, Distribution<State> initiale, State etatInitial, int samples, int maxIt)
+        public System(World world, MDP mdp, Distribution<State> initial, State initialState, int treeSamplesCount, int treeDepth)
         {
-            CurrentDistribution = initiale;
-            _trueState = etatInitial;
+            CurrentDistribution = initial;
+            _trueState = initialState;
             _model = mdp;
-            World = m;
-            samplesCount = samples;
-            maxIteration = maxIt;
+            World = world;
+            TreeSamplesCountCount = treeSamplesCount;
+            maxIteration = treeDepth;
         }
 
-        public System(World m, MDP mdp, Distribution<State> initial, int samples, int maxIt)
+        public System(World world, MDP mdp, Distribution<State> initial, int treeSamplesCount, int treeDepth)
         {
             CurrentDistribution = initial;
             _trueState = CurrentDistribution.Draw();
             _model = mdp;
-            World = m;
-            samplesCount = samples;
-            maxIteration = maxIt;
+            World = world;
+            TreeSamplesCountCount = treeSamplesCount;
+            maxIteration = treeDepth;
         }
 
         
@@ -63,15 +82,15 @@ namespace POMCP.Website.Models
         {
             if (lastNode == null)
             {
-                _tree = new SamplingTree(CurrentDistribution, samplesCount, maxIteration, _model);
+                _tree = new SamplingTree(CurrentDistribution, TreeSamplesCountCount, maxIteration, _model);
             }
             else
             {
                 lastNode.SetAsRoot(CurrentDistribution);
-                _tree = new SamplingTree(lastNode, samplesCount, maxIteration, _model);
+                _tree = new SamplingTree(lastNode, TreeSamplesCountCount, maxIteration, _model);
             }
 
-            _tree = new SamplingTree(CurrentDistribution, samplesCount, maxIteration, _model);
+            _tree = new SamplingTree(CurrentDistribution, TreeSamplesCountCount, maxIteration, _model);
 
             ActionNode a = _tree.GetBestAction();
             LastAction = a.Action;
@@ -102,15 +121,15 @@ namespace POMCP.Website.Models
         {
             if (lastNode == null)
             {
-                _tree = new SamplingTree(CurrentDistribution, samplesCount, maxIteration, _model);
+                _tree = new SamplingTree(CurrentDistribution, TreeSamplesCountCount, maxIteration, _model);
             }
             else
             {
                 lastNode.SetAsRoot(CurrentDistribution);
-                _tree = new SamplingTree(lastNode, samplesCount, maxIteration, _model);
+                _tree = new SamplingTree(lastNode, TreeSamplesCountCount, maxIteration, _model);
             }
 
-            _tree = new SamplingTree(CurrentDistribution, samplesCount, maxIteration, _model);
+            _tree = new SamplingTree(CurrentDistribution, TreeSamplesCountCount, maxIteration, _model);
 
             ActionNode actionNode = _tree.GetBestAction();
             LastAction = actionNode.Action;

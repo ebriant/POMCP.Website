@@ -1,23 +1,9 @@
 .cell {
   width: 30px;
   height: 30px;
-  background-color: #F2F2F2;
   border: 1px solid black;
 }
 
-.fa-rotate-45 {
-  -ms-transform:rotate(45deg);     /* Internet Explorer 9 */
-  -webkit-transform:rotate(45deg); /* Chrome, Safari, Opera */
-  transform:rotate(45deg);         /* Standard syntax */
-}
-
-#control button {
-  background-color: #F2F2F2;
-  border: 0;
-  width: 40px;
-  height: 40px;
-}
-
-#control i {
-  color: #2E343F;
+.btn {
+  background-color: rgb(55,55,55);
 }

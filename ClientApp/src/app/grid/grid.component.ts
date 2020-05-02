@@ -1,7 +1,6 @@
-import {Component, ViewChild, ElementRef, OnInit, Inject} from '@angular/core';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import {Component, OnInit, Inject, Input} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-
+import {Cell} from "../map";
 
 @Component({
   selector: 'app-grid',
@@ -10,29 +9,9 @@ import {HttpClient} from "@angular/common/http";
 })
 export class GridComponent implements OnInit {
 
-  private xSize = 20;
-  private ySize = 20;
-  public cells: Cell[][];
+  @Input() cells: Cell[][];
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    // http.get<number[]>(baseUrl + 'world/dimensions').subscribe(result => {
-    //   this.xSize = result[0];
-    //   this.ySize = result[1];
-    // }, error => console.error(error));
-
-    http.get<Cell[][]>(baseUrl + 'world/cells').subscribe(result => {
-      this.cells = result;
-      this.xSize = result.length;
-      this.ySize = result[0].length;
-    }, error => console.error(error));
-
-    // http.get<Cell>(baseUrl + 'world/target').subscribe(result => {
-    //   this.ctx.fillStyle = 'green';
-    //   this.drawCell(result);
-    //
-    // }, error => console.error(error));
-
-
+  constructor() {
   }
 
   ngOnInit(): void {
@@ -40,44 +19,67 @@ export class GridComponent implements OnInit {
   }
 
   abscissaArray(): number[] {
-    return Array.from(Array(this.xSize).keys())
+    return Array.from(Array(this.cells.length).keys())
   }
 
   ordinateArray(): number[] {
-    return Array.from(Array(this.ySize).keys())
+    return Array.from(Array(this.cells[0].length).keys())
   }
 
   getCellColor(x,y) {
     if (typeof this.cells === "undefined") {
       return "#F2F2F2";
     }
-
     switch(this.cells[x][y].cellType) {
       case "wall": {
-        return "#737373";
+        return "#262626";
       }
       case "glass": {
-        return "#05F2F2";
+        return "#ACC8D9";
       }
       case "target": {
-        return "#4B7E12";
+        return "#6ED93D";
       }
       default: {
         return "#F2F2F2";
       }
     }
+
   }
-}
 
-interface Cell {
-  x:number;
-  y:number;
-  cellType :string;
-}
+  /**
+   * Return the string corresponding to the color of the probability in css rbg style (example "rgb(110,217,61)")
+   * @param p: probability
+   */
+  public getColorProba(p) {
+    let color1 = [110,217,61];
+    let color2 = [242,242,242];
+    let newColor = [];
+    for (let i = 0; i<3; i++) {
+      newColor[i] = color1[i] + (color2[i] - color1[i]) * p
+    }
+    return "rgb(" + newColor[0] + ","  + newColor[1] + "," + newColor[2] + ")"
 
-interface Map {
-  dx: number;
-  dy: number;
+  }
+
+  hexToRGB(h) {
+    let r = 0, g = 0, b = 0;
+
+    // 3 digits
+    if (h.length == 4) {
+      let r = "0x" + h[1] + h[1];
+      let g = "0x" + h[2] + h[2];
+      let b = "0x" + h[3] + h[3];
+
+      // 6 digits
+    } else if (h.length == 7) {
+      let r = "0x" + h[1] + h[2];
+      let g = "0x" + h[3] + h[4];
+      let b = "0x" + h[5] + h[6];
+    }
+
+    return "rgb("+ +r + "," + +g + "," + +b + ")";
+  }
 }
 
 

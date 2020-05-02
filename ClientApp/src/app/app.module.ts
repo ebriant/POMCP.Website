@@ -10,8 +10,9 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import {GridComponent} from "./grid/grid.component";
-import { CellComponent } from './cell/cell.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BoardComponent } from './board/board.component';
+import {Cell} from "./map";
 
 @NgModule({
   declarations: [
@@ -21,7 +22,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
     CounterComponent,
     FetchDataComponent,
     GridComponent,
-    CellComponent,
+    BoardComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
