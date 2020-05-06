@@ -141,8 +141,8 @@ namespace POMCP.Website.Models.Pomcp
         {
             Distribution<State> d1 = new Distribution<State>();
             foreach (State s in d.GetKeys()) {
-                if (d.getProba(s) != 0)
-                    d1.setProba(this.GetActionResult(s, a), d.getProba(s));
+                if (d.getProba(s) > 0)
+                    d1.setProba(GetActionResult(s, a), d.getProba(s));
             }
             Distribution<State> dnew = new Distribution<State>();
 

@@ -1,6 +1,5 @@
 import {Component, OnInit, Inject, Input} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Cell} from "../map";
+import {Camera} from "../map";
 
 @Component({
   selector: 'app-grid',
@@ -9,42 +8,84 @@ import {Cell} from "../map";
 })
 export class GridComponent implements OnInit {
 
-  @Input() cells: Cell[][];
+  @Input() cells: string[][];
+  @Input() camera: boolean;
+  @Input() CamerasList: Camera[] = [];
+
+  // @Input()
+  // set item(CamerasList:  Camera[]) {
+  //   console.log('previous item = ', this._item);
+  //   console.log('currently selected item=', val);
+  //   this._item = val;
+  //   this._item.status = 'In Process';
+  // }
+
+  CameraVector: number[][] = [];
 
   constructor() {
   }
 
   ngOnInit(): void {
-
   }
 
   abscissaArray(): number[] {
+    if (typeof(this.cells) == "undefined") {
+      return []
+    }
     return Array.from(Array(this.cells.length).keys())
   }
 
   ordinateArray(): number[] {
+    if (typeof(this.cells) == "undefined") {
+      return []
+    }
     return Array.from(Array(this.cells[0].length).keys())
   }
 
-  getCellColor(x,y) {
-    if (typeof this.cells === "undefined") {
-      return "#F2F2F2";
+  getCellSize() {
+    if (typeof(this.cells) == "undefined") {
+      return 0
     }
-    switch(this.cells[x][y].cellType) {
-      case "wall": {
-        return "#262626";
-      }
-      case "glass": {
-        return "#ACC8D9";
-      }
-      case "target": {
-        return "#6ED93D";
-      }
-      default: {
-        return "#F2F2F2";
-      }
-    }
+    return Math.round(320 / this.cells.length);
+  }
 
+  IsCellProba(x,y) :boolean {
+     return !isNaN(Number(this.cells[x][y]))
+  }
+
+
+  getCellColor(x,y) {
+    if (typeof(this.cells) == "undefined") {
+      return "#F2F2F2"
+    }
+    if (!this.IsCellProba(x,y)){
+      switch(this.cells[x][y]) {
+        case "wall": {
+          return "#262626";
+        }
+        case "glass": {
+          return "#ACC8D9";
+        }
+        case "target": {
+          return "#6ED93D";
+        }
+        case "invisible": {
+          return "#727372"
+        }
+        case "visible": {
+          return "#BFBFBF"
+        }
+        case "camera": {
+          return "#F28705"
+        }
+        default: {
+          return "#F2F2F2";
+        }
+      }
+    }
+    else {
+      return this.getColorProba(Number(this.cells[x][y]));
+    }
   }
 
   /**
@@ -52,8 +93,8 @@ export class GridComponent implements OnInit {
    * @param p: probability
    */
   public getColorProba(p) {
-    let color1 = [110,217,61];
-    let color2 = [242,242,242];
+    let color1 = [242,242,242];
+    let color2 = [110,217,61];
     let newColor = [];
     for (let i = 0; i<3; i++) {
       newColor[i] = color1[i] + (color2[i] - color1[i]) * p
@@ -80,6 +121,16 @@ export class GridComponent implements OnInit {
 
     return "rgb("+ +r + "," + +g + "," + +b + ")";
   }
+
+  getVectorX(angle: number) {
+    return Math.round((1000) * Math.cos(angle));
+  }
+
+  getVectorY(angle: number) {
+    return Math.round((1000) * Math.sin(angle));
+  }
+
+
 }
 
 

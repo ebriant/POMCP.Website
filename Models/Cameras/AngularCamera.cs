@@ -7,13 +7,13 @@ namespace POMCP.Website.Models.Cameras
 {
     public class AngularCamera : Camera
     {
-        public double FOV = Math.PI / 8;
         
-        public AngularCamera(int x, int y, int number, CameraVision vision) : base(x, y, number, vision)
+
+        public AngularCamera(int x, int y, int number) : base(x, y, number)
         {
         }
 
-        
+
         /// <summary>
         /// Return the cameras's field of view using the angle
         /// </summary>
@@ -28,31 +28,35 @@ namespace POMCP.Website.Models.Cameras
                 Math.Cos(angle),
                 Math.Sin(angle)
             };
-
             // tolerance on the cosinus
             double cosTolerance = Math.Cos(FOV);
-
+            
             // for each cell
             for (int i = 0; i < result.GetLength(0); i++)
-            for (int j = 0; j < result.GetLength(1); j++)
             {
-                // get the vector camera -> cell
-                double dx = i - X;
-                double dy = j - Y;
-                double norm = Math.Sqrt(dx * dx + dy * dy);
-
-                if (norm > 0)
+                for (int j = 0; j < result.GetLength(1); j++)
                 {
-                    // get the cosinus
-                    double cos = (dx * cameraViewVector[0] + dy
-                                     * cameraViewVector[1])
-                                 / norm;
-                    // if the cos is less than tolerance, invisible
-                    if (cos < cosTolerance)
+                    if (!VisibleCells[i, j])
+                    {
                         result[i, j] = false;
+                    }
+                    else
+                    {
+                        // get the vector camera -> cell
+                        double dx = i - X;
+                        double dy = j - Y;
+                        double normSq = dx * dx + dy * dy;
+                        if (normSq > 0)
+                        {
+                            // get the cosinus cos = (a.b) / |a||b| (. is the dot product of the vectors)
+                            double cos = (dx * cameraViewVector[0] + dy * cameraViewVector[1]) / Math.Sqrt(normSq);
+                            // if the cos is above than tolerance, the cell is visible
+                            if (cos > cosTolerance)
+                                result[i, j] = true;
+                        }
+                    }
                 }
             }
-
             return result;
         }
 
@@ -70,24 +74,26 @@ namespace POMCP.Website.Models.Cameras
         public override List<double> GetActions(double angle)
         {
             int p = (int) Math.Round(angle / Math.PI);
-            
+
             List<double> actions = new List<double>();
-            for (int i = p-2; i < p+3; i++)
+            for (int i = p - 2; i < p + 3; i++)
             {
                 actions.Add(Math.PI * i / 4);
             }
+
             return actions;
         }
-        
+
         public override double GetValue(State state)
         {
             bool[,] vision = GetVision(state.CamerasOrientations[Num]);
             double count = 0;
             foreach (bool b in vision)
             {
-                if (b) count+=1;
+                if (b) count += 1;
             }
-            return vision[state.X,state.Y] ? 1 : 0 + count / (vision.GetLength(0) * vision.GetLength(1));
+
+            return vision[state.X, state.Y] ? 1 : 0 + count / (vision.GetLength(0) * vision.GetLength(1));
         }
     }
 }

@@ -5,10 +5,10 @@ namespace POMCP.Website.Models.Cameras
 {
     public abstract class CameraVision
     {
-        protected Map map;
+        protected Map Map { get; }
 
         public CameraVision(Map map) {
-            map = map;
+            Map = map;
         }
         
         

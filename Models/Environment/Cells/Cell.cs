@@ -1,7 +1,4 @@
-﻿﻿using System;
- using System.Runtime.CompilerServices;
-
- namespace POMCP.Website.Models.Environment
+﻿namespace POMCP.Website.Models.Environment.Cells
 {
     public class Cell
     {

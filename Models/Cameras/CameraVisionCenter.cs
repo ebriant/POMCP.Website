@@ -1,5 +1,6 @@
 ﻿using System;
 using POMCP.Website.Models.Environment;
+using POMCP.Website.Models.Environment.Cells;
 
 
 namespace POMCP.Website.Models.Cameras
@@ -19,11 +20,12 @@ namespace POMCP.Website.Models.Cameras
         /// <returns> 2D array of booleans: true if the cell is visible, false either</returns>
         public override bool[,] GetVisible(int xCam, int yCam)
         {
-            bool[,] result = new bool[map.Dx, map.Dy];
+            
+            bool[,] result = new bool[Map.Dx, Map.Dy];
             // For all cases in the map
-            for (int i = 0; i < map.Dx; i++)
+            for (int i = 0; i < Map.Dx; i++)
             {
-                for (int j = 0; j < map.Dy; j++)
+                for (int j = 0; j < Map.Dy; j++)
                 {
                     // If the cell is the camera, it is visible
                     if (xCam == i && yCam == j)
@@ -49,6 +51,10 @@ namespace POMCP.Website.Models.Cameras
         /// <returns>True if the cell is visible</returns>
         private bool IsVisible(int xCam, int yCam, int i, int j)
         {
+            if (!Map.IsCellFree(i,j))
+            {
+                return false;
+            }
             // amplitude of one step
             double maxi = Math.Max(Math.Abs(xCam - i), Math.Abs(yCam - j));
             
@@ -86,7 +92,7 @@ namespace POMCP.Website.Models.Cameras
         /// <returns></returns>
         private bool IsViewBlocked(double tmpX, double tmpY)
         {
-            float TOLERANCE = 0.01f;
+            float TOLERANCE = 0.001f;
             // Get the cell corresponding to (tmpX,tmpY)
             int x = (int) tmpX;
             int y = (int) tmpY;
@@ -94,14 +100,14 @@ namespace POMCP.Website.Models.Cameras
             // Problem when the point is near the border of two cells (X line)
             if (Math.Abs(x - tmpX) < TOLERANCE)
                 // test if the two adjacent cells are both opaque
-                return map.GetCell(x, y) is Opaque & map.GetCell(x-1, y) is Opaque;
+                return Map.GetCell(x, y) is Opaque & Map.GetCell(x-1, y) is Opaque;
             
             // Problem when the point is near the border of two cells (Y line)
             if (Math.Abs(y - tmpY) < TOLERANCE)
                 // test if the two adjacent cells are both opaque
-                return map.GetCell(x, y) is Opaque & map.GetCell(x, y-1) is Opaque;
+                return Map.GetCell(x, y) is Opaque & Map.GetCell(x, y-1) is Opaque;
             // general case
-            return map.GetCell(x, y) is Opaque;
+            return Map.GetCell(x, y) is Opaque;
         }
     }
 }

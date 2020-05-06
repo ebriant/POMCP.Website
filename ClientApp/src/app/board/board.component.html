@@ -1,55 +1,72 @@
-<p>board works!</p>
-
 <div style="padding: 10px">
   <table id="control">
     <tr>
       <td>
-
-        <button type="button" matTooltip="Info about the action">
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[0][0]">
           <i class="fa fa-arrow-circle-o-left fa-2x fa-rotate-45"></i>
         </button>
       </td>
       <td>
-        <button type="button"> <i class="fa fa-arrow-circle-o-up fa-2x"></i>
+        <button type="button"
+                (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[0][1]"
+                tooltip="move upward" placement="top" delay="50">
+          <i class="fa fa-arrow-circle-o-up fa-2x"></i>
         </button>
       </td>
       <td>
-        <button type="button"><i class="fa fa-arrow-circle-o-up fa-2x fa-rotate-45"></i>
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[0][2]">
+          <i class="fa fa-arrow-circle-o-up fa-2x fa-rotate-45"></i>
         </button>
       </td>
     </tr>
     <tr>
       <td>
-        <button type="button"><i class="fa fa-arrow-circle-o-left fa-2x"></i>
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[1][0]">
+          <i class="fa fa-arrow-circle-o-left fa-2x"></i>
         </button>
       </td>
       <td>
-        <button type="button"><i class="fa fa-circle-o fa-2x"></i>
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[1][1]">
+          <i class="fa fa-circle-o fa-2x"></i>
         </button>
       </td>
       <td>
-        <button type="button"><i class="fa fa-arrow-circle-o-right fa-2x"></i>
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[1][2]">
+          <i class="fa fa-arrow-circle-o-right fa-2x"></i>
         </button>
       </td>
     <tr>
       <td>
-        <button type="button"><i class="fa fa-arrow-circle-o-down fa-2x fa-rotate-45"></i>
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[2][0]">
+          <i class="fa fa-arrow-circle-o-down fa-2x fa-rotate-45"></i>
         </button>
       </td>
       <td>
-        <button type="button"> <i class="fa fa-arrow-circle-o-down fa-2x"></i>
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[2][1]">
+          <i class="fa fa-arrow-circle-o-down fa-2x"></i>
         </button>
       </td>
       <td>
-        <button type="button"><i class="fa fa-arrow-circle-o-right fa-2x fa-rotate-45"></i>
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[2][2]">
+          <i class="fa fa-arrow-circle-o-right fa-2x fa-rotate-45"></i>
         </button>
       </td>
     </tr>
 
   </table>
 </div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <app-grid [cells]="trueState"></app-grid>
+    </div>
 
+    <div class="col-sm">
+      <app-grid [cells]="proba"></app-grid>
+    </div>
 
-<app-grid [cells]="cells" style="float:left;"></app-grid>
-
-<app-grid [cells]="cells"></app-grid>
+    <div class="col-sm">
+      <app-grid [cells]="cameraView" [CamerasList]="cameras"></app-grid>
+    </div>
+  </div>
+</div>

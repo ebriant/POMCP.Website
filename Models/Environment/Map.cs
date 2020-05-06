@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks.Dataflow;
+ using POMCP.Website.Models.Environment.Cells;
 
-namespace POMCP.Website.Models.Environment
+ namespace POMCP.Website.Models.Environment
 {
     public class Map
     {
@@ -71,22 +72,22 @@ namespace POMCP.Website.Models.Environment
 			return x >= 0 && x < Dx && y >= 0 && y < Dy;
 		}
 
-		public Cell[][] GetCellsArray()
+		public string[][] GetCellsArray(string defaultString = "undefined")
 		{
-			Cell[][] result = new Cell[Dx][];
+			string[][] result = new string[Dx][];
 			for (int i = 0; i < Dx; i++)
 			{
-				result[i] = new Cell[Dy];
+				result[i] = new string[Dy];
 				
 				for (int j = 0; j < Dy; j++)
 				{
 					if (Cells[i, j] == null)
 					{
-						result[i][j] = new Cell(i,j);
+						result[i][j] = defaultString;
 					}
 					else
 					{
-						result[i][j] = Cells[i,j];
+						result[i][j] = Cells[i,j].CellType;
 					}
 				}
 			}

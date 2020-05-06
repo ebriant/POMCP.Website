@@ -5,12 +5,10 @@ namespace POMCP.Website.Models.Pomcp
 {
 	public class Distribution<T>
 	{
-
-
 		/**
 	 * Discrete list of probabilities
 	 */
-		private Dictionary<T, double> prob;
+		public Dictionary<T, double> Prob { get; }
 
 		public Random rnd = new Random();
 
@@ -20,8 +18,8 @@ namespace POMCP.Website.Models.Pomcp
 		public double getProba(T element)
 		{
 			// If the element is in the distribution, return its probability
-			if (prob.ContainsKey(element))
-				return (prob[element]);
+			if (Prob.ContainsKey(element))
+				return (Prob[element]);
 
 			// the element doesn't exist ==> null proba
 			return (0);
@@ -32,7 +30,7 @@ namespace POMCP.Website.Models.Pomcp
 	 */
 		public void setProba(T element, double p)
 		{
-			prob[element] = p;
+			Prob[element] = p;
 		}
 
 		/**
@@ -44,7 +42,7 @@ namespace POMCP.Website.Models.Pomcp
 	 */
 		public Distribution()
 		{
-			prob = new Dictionary<T, double>();
+			Prob = new Dictionary<T, double>();
 		}
 
 		/**
@@ -56,12 +54,12 @@ namespace POMCP.Website.Models.Pomcp
 	 */
 		public Distribution(Distribution<T> d)
 		{
-			prob = new Dictionary<T, double>();
+			Prob = new Dictionary<T, double>();
 
 			// creer les probabilités constantes à chaque état
-			foreach (T s in d.prob.Keys)
+			foreach (T s in d.Prob.Keys)
 			{
-				prob[s] = 0;
+				Prob[s] = 0;
 			}
 		}
 
@@ -74,7 +72,7 @@ namespace POMCP.Website.Models.Pomcp
 		public double GetNorm()
 		{
 			double c = 0;
-			foreach (double s in prob.Values)
+			foreach (double s in Prob.Values)
 			{
 				c += s;
 			}
@@ -89,9 +87,9 @@ namespace POMCP.Website.Models.Pomcp
 		public void Normalise()
 		{
 			double norm = GetNorm();
-			foreach (T s in prob.Keys)
+			foreach (T s in Prob.Keys)
 			{
-				setProba(s, prob[s] / norm);
+				setProba(s, Prob[s] / norm);
 			}
 		}
 
@@ -110,13 +108,13 @@ namespace POMCP.Website.Models.Pomcp
 	 */
 		public Dictionary<T, double>.KeyCollection GetKeys()
 		{
-			return prob.Keys;
+			return Prob.Keys;
 		}
 
 
 		public bool ContainsKey(T key)
 		{
-			return prob.ContainsKey(key);
+			return Prob.ContainsKey(key);
 		}
 
 
@@ -127,10 +125,10 @@ namespace POMCP.Website.Models.Pomcp
 	 */
 		public T Draw()
 		{
-			if (prob.Count == 0) return default(T);
+			if (Prob.Count == 0) return default(T);
 			
 			double p = rnd.NextDouble();
-			Dictionary<T, double>.KeyCollection.Enumerator keys = prob.Keys.GetEnumerator();
+			Dictionary<T, double>.KeyCollection.Enumerator keys = Prob.Keys.GetEnumerator();
 			T s = default(T);
 			while (p > 0 && keys.MoveNext())
 			{
@@ -157,7 +155,7 @@ namespace POMCP.Website.Models.Pomcp
 		public Distribution<T> clone()
 		{
 			Distribution<T> d = new Distribution<T>();
-			foreach (T e in prob.Keys)
+			foreach (T e in Prob.Keys)
 			{
 				d.setProba(e, getProba(e));
 			}

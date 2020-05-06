@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using POMCP.Website.Models;
 using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
+using POMCP.Website.Models.Environment.Cells;
 using POMCP.Website.Models.Target;
 
 namespace POMCP.Website.Controllers
@@ -30,21 +31,11 @@ namespace POMCP.Website.Controllers
         }
 
         [HttpGet]
-        [Route("dimensions")]
-        public int[] Map()
-        {
-            return new[] {WorldBuilder.DefaultWorld.Map.Dx, WorldBuilder.DefaultWorld.Map.Dy};
-        }
-        
-        [HttpGet]
         [Route("cells")]
-        public Cell[][] GetCellsArray()
+        public string[][] GetCellsArray()
         {
-            // Cell[][] test = new Cell[1][];
-            // test[0] = new Cell[1];
-            // test [0][0] = new Wall(0, 0);
-            // return test;
-            return WorldBuilder.DefaultWorld.GetCellsArray();
+            string[][] cellArray = WorldBuilder.DefaultWorld.Map.GetCellsArray();
+            return cellArray;
         }
         
         [HttpGet]
@@ -54,11 +45,11 @@ namespace POMCP.Website.Controllers
             return WorldBuilder.DefaultWorld.Target;
         }
         
-        [HttpGet]
-        [Route("camera")]
-        public IEnumerable<Camera> GetCameras()
-        {
-            return WorldBuilder.DefaultWorld.Cameras;
-        }
+        // [HttpGet]
+        // [Route("camera")]
+        // public IEnumerable<DisplayCamera> GetCameras()
+        // {
+        //     return Models.System.;
+        // }
     }
 }

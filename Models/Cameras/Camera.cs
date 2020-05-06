@@ -1,32 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using POMCP.Website.Models.Environment;
+using POMCP.Website.Models.Environment.Cells;
 using POMCP.Website.Models.Pomcp;
 
 namespace POMCP.Website.Models.Cameras
 {
     public abstract class Camera: Cell
     {
+	    public double FOV { get; } = Math.PI / 8;
+
 	    public bool[,] VisibleCells;
 
 	    private CameraVision _vision;
 
-	    /**
-		 * Number of the Camera in the world
-		 */
+		   
+		 /// <summary>
+		 /// Number of the Camera in the world
+		 /// </summary>
         public int Num { get; }
 	    
 	    
-        public Camera(int x, int y, int number, CameraVision vision) : base(x,y)
+        public Camera(int x, int y, int number) : base(x,y)
         {
 	        CellType = "camera";
             Num = number;
-            _vision = vision;
         }
 
-        public void Initialize()
+        public void Initialize(CameraVision vision)
         {
-	        VisibleCells =  _vision.GetVisible(X, Y);
+	        VisibleCells =  vision.GetVisible(X, Y);
         }
 	
         

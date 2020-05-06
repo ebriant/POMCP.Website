@@ -1,7 +1,8 @@
 ﻿﻿using System.Collections.Generic;
  using POMCP.Website.Models.Cameras;
+ using POMCP.Website.Models.Environment.Cells;
 
- 
+
  namespace POMCP.Website.Models.Environment
 {
     public class World
@@ -19,13 +20,6 @@
             Cameras = new List<Camera>();
         }
 
-        public Cell[][] GetCellsArray()
-        {
-            Cell[][] result = Map.GetCellsArray();
-            result[Target.X][Target.Y] = Target;
-            return result;
-        }
-        
         public void AddCamera(Camera c) {
             Cameras.Add(c);
         }
@@ -33,7 +27,7 @@
         public void InitializeCamera() {
             CameraVision vision = new CameraVisionCenter(Map);
             foreach (Camera c in Cameras) {
-                c.Initialize();
+                c.Initialize(vision);
             }
         }
     }

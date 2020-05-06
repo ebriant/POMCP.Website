@@ -14,3 +14,7 @@
 #control i {
   color: #2E343F;
 }
+
+#control button:disabled i {
+  color: #BABCBF;
+}

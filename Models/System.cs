@@ -1,25 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using Microsoft.AspNetCore.Authentication;
+using POMCP.Website.Controllers;
 using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
 using POMCP.Website.Models.Pomcp;
+using Action = POMCP.Website.Models.Pomcp.Action;
 
 namespace POMCP.Website.Models
 {
     public class System
     {
-
-        public static System instance;
+        public static System Instance = GetInstance();
 
         private static System GetInstance()
         {
             World world = WorldBuilder.DefaultWorld;
             Distribution<State> d = new Distribution<State>();
             List<double> camerasOrientations = new List<double>();
+
             foreach (Camera camera in world.Cameras)
             {
-                camerasOrientations.Add(0d);
+                camerasOrientations.Add(-Math.PI / 2);
             }
-            d.setProba(new State(7,1,camerasOrientations), 1);	
+
+            d.setProba(new State(6, 1, camerasOrientations), 0.5);
+            d.setProba(new State(6, 2, camerasOrientations), 0.5);
             MDP mdp = new MDP(world);
             return new System(world, mdp, d, 500, 3);
         }
@@ -28,85 +35,86 @@ namespace POMCP.Website.Models
         public World World { get; }
 
         private MDP _model;
-        
-        public Distribution<State> CurrentDistribution { get; set; }
-        
-        public Observation LastObservation { get; }
-        
-        private Action LastAction { get; set; }
-        
-        private State _trueState;
 
-        private BeliefNode lastNode = null;
+        private Distribution<State> CurrentDistribution { get; set; }
+
+        public Observation LastObservation { get; }
+
+        private Action LastAction { get; set; }
+
+        private State TrueState { get; set; }
+
+        private BeliefNode LastNode { get; } = null;
 
         SamplingTree _tree;
 
-        public int TreeSamplesCountCount;
+        private int TreeSamplesCount { get; }
 
-        public int maxIteration;
+        private int TreeDepth { get; }
 
-        
-        public System(World world, MDP mdp, Distribution<State> initial, State initialState, int treeSamplesCount, int treeDepth)
+        private System(World world, MDP mdp, Distribution<State> initial, int treeSamplesCount, int treeDepth)
         {
             CurrentDistribution = initial;
-            _trueState = initialState;
+            TrueState = CurrentDistribution.Draw();
             _model = mdp;
             World = world;
-            TreeSamplesCountCount = treeSamplesCount;
-            maxIteration = treeDepth;
+            TreeSamplesCount = treeSamplesCount;
+            TreeDepth = treeDepth;
         }
 
-        public System(World world, MDP mdp, Distribution<State> initial, int treeSamplesCount, int treeDepth)
-        {
-            CurrentDistribution = initial;
-            _trueState = CurrentDistribution.Draw();
-            _model = mdp;
-            World = world;
-            TreeSamplesCountCount = treeSamplesCount;
-            maxIteration = treeDepth;
-        }
-
-        
         public void AdvanceSystem(int n)
         {
             for (int i = 0; i < n; i++)
             {
-                AdvanceSystem();
+                AdvanceSystem(null);
             }
         }
 
-        /**
-	 * permet de faire evoluer l'etat reel et la connaissance sur l'etat
-	 */
-        public void AdvanceSystem()
+
+        private ActionNode GetBestAction()
         {
-            if (lastNode == null)
+            if (LastNode == null)
             {
-                _tree = new SamplingTree(CurrentDistribution, TreeSamplesCountCount, maxIteration, _model);
+                _tree = new SamplingTree(CurrentDistribution, TreeSamplesCount, TreeDepth, _model);
             }
             else
             {
-                lastNode.SetAsRoot(CurrentDistribution);
-                _tree = new SamplingTree(lastNode, TreeSamplesCountCount, maxIteration, _model);
+                LastNode.SetAsRoot(CurrentDistribution);
+                _tree = new SamplingTree(LastNode, TreeSamplesCount, TreeDepth, _model);
             }
 
-            _tree = new SamplingTree(CurrentDistribution, TreeSamplesCountCount, maxIteration, _model);
+            return _tree.GetBestAction();
+        }
 
-            ActionNode a = _tree.GetBestAction();
-            LastAction = a.Action;
+        public void AdvanceSystem(State s)
+        {
+            ActionNode actionNode = GetBestAction();
+            LastAction = actionNode.Action;
 
-            _trueState = _model.UpdateTransition(_trueState, LastAction).Draw();
+            if (s != null)
+            {
+                if (World.Map.IsCellFree(s.X, s.Y))
+                {
+                    TrueState = s;
+                }
+            }
+            else
+            {
+                TrueState = _model.UpdateTransition(TrueState, LastAction).Draw();
+            }
+
 
             Distribution<Observation> observationDistribution = new Distribution<Observation>();
             foreach (Camera c in World.Cameras)
             {
-                if (observationDistribution.GetKeys().Count == 0)
+                if (observationDistribution.Prob.Count == 0)
                 {
-                    observationDistribution = c.GetObservation(_trueState);
+                    observationDistribution = c.GetObservation(TrueState);
                 }
                 else
                 {
-                    observationDistribution = _model.CrossDistributions(observationDistribution,c.GetObservation(_trueState));
+                    observationDistribution =
+                        _model.CrossDistributions(observationDistribution, c.GetObservation(TrueState));
                 }
             }
 
@@ -114,48 +122,104 @@ namespace POMCP.Website.Models
             CurrentDistribution = _model.UpdateObservation(CurrentDistribution, observationDistribution);
         }
 
-        /**
-	 * permet de faire evoluer l'etat reel et la connaissance sur l'etat
-	 */
-        public void AdvanceSystem(State s)
+
+        /// <summary>
+        /// Return the grid describing the true state of the system
+        /// </summary>
+        /// <returns></returns>
+        public string[][] GetTrueStateGrid()
         {
-            if (lastNode == null)
+            string[][] cellArray = World.Map.GetCellsArray();
+            cellArray[TrueState.X][TrueState.Y] = "target";
+            return cellArray;
+        }
+
+        /// <summary>
+        /// Return the grid describing the current distribution of the system
+        /// (the probabilities of the target for every cell)
+        /// </summary>
+        /// <returns></returns>
+        public string[][] GetProbaGrid()
+        {
+            string[][] cellArray = World.Map.GetCellsArray();
+            foreach (KeyValuePair<State, double> keyValuePair in CurrentDistribution.Prob)
             {
-                _tree = new SamplingTree(CurrentDistribution, TreeSamplesCountCount, maxIteration, _model);
+                State key = keyValuePair.Key;
+                cellArray[key.X][key.Y] = keyValuePair.Value.ToString();
             }
-            else
+
+            return cellArray;
+        }
+
+        /// <summary>
+        /// Return the view of the camera
+        /// </summary>
+        /// <returns></returns>
+        public string[][] GetCameraViewGrid()
+        {
+            string[][] cellArray = World.Map.GetCellsArray("invisible");
+
+            foreach (Camera camera in World.Cameras)
             {
-                lastNode.SetAsRoot(CurrentDistribution);
-                _tree = new SamplingTree(lastNode, TreeSamplesCountCount, maxIteration, _model);
-            }
-
-            _tree = new SamplingTree(CurrentDistribution, TreeSamplesCountCount, maxIteration, _model);
-
-            ActionNode actionNode = _tree.GetBestAction();
-            LastAction = actionNode.Action;
-
-            if (World.Map.IsCellFree(s.X, s.Y))
-            {
-                _trueState = s;
-            }
-
-            _trueState = _model.GetActionResult(s, LastAction);
-
-            Distribution<Observation> o = new Distribution<Observation>();
-            foreach (Camera c in World.Cameras)
-            {
-                if (o.GetKeys().Count == 0)
+                for (int i = 0; i < camera.VisibleCells.GetLength(0); i++)
                 {
-                    o = c.GetObservation(_trueState);
-                }
-                else
-                {
-                    o = _model.CrossDistributions(o, c.GetObservation(_trueState));
+                    for (int j = 0; j < camera.VisibleCells.GetLength(1); j++)
+                    {
+                        if (camera.VisibleCells[i, j])
+                            cellArray[i][j] = "visible";
+                    }
                 }
             }
 
-            CurrentDistribution = _model.UpdateTransition(CurrentDistribution, LastAction);
-            CurrentDistribution = _model.UpdateObservation(CurrentDistribution, o);
+            foreach (Camera camera in World.Cameras)
+            {
+                bool[,] vision = camera.GetVision(TrueState.CamerasOrientations[camera.Num]);
+                for (int i = 0; i < camera.VisibleCells.GetLength(0); i++)
+                {
+                    for (int j = 0; j < camera.VisibleCells.GetLength(1); j++)
+                    {
+                        if (vision[i, j])
+                        {
+                            if (i == TrueState.X & j == TrueState.Y)
+                                cellArray[i][j] = "target";
+                            else
+                                cellArray[i][j] = "undefined";
+                        }
+                    }
+                }
+
+                cellArray[camera.X][camera.Y] = "camera";
+            }
+
+            return cellArray;
+        }
+
+
+        public CameraProperties[] GetCameras()
+        {
+            List<CameraProperties> result = new List<CameraProperties>();
+            foreach (Camera camera in World.Cameras)
+            {
+                result.Add(new CameraProperties(camera.X, camera.Y
+                    , TrueState.CamerasOrientations[camera.Num], camera.FOV));
+            }
+
+            return result.ToArray();
+        }
+
+        public bool[][] GetMoveOptions()
+        {
+            bool[][] result = new bool[3][];
+            for (int i = 0; i < 3; i++)
+            {
+                result[i] = new bool[3];
+                for (int j = 0; j < 3; j++)
+                {
+                    result[i][j] = World.Map.IsCellFree(TrueState.X + i - 1, TrueState.Y + j - 1);
+                }
+            }
+
+            return result;
         }
     }
 }

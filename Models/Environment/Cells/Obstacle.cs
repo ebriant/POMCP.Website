@@ -1,4 +1,4 @@
-﻿﻿namespace POMCP.Website.Models.Environment
+﻿﻿namespace POMCP.Website.Models.Environment.Cells
 {
     public class Obstacle : Cell
     {

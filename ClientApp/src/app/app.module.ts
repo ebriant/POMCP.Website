@@ -12,7 +12,7 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import {GridComponent} from "./grid/grid.component";
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BoardComponent } from './board/board.component';
-import {Cell} from "./map";
+import { TooltipDirective } from './tooltip.directive';
 
 @NgModule({
   declarations: [
@@ -23,6 +23,7 @@ import {Cell} from "./map";
     FetchDataComponent,
     GridComponent,
     BoardComponent,
+    TooltipDirective,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

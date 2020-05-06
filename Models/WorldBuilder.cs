@@ -1,5 +1,6 @@
 ﻿using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
+using POMCP.Website.Models.Environment.Cells;
 using POMCP.Website.Models.Target;
 
 namespace POMCP.Website.Models
@@ -18,18 +19,18 @@ namespace POMCP.Website.Models
             Map map = new Map(8,8);
             
             map.AddObstacle(new Wall(1,4));
-            map.AddObstacle(new Wall(2,4));
+            map.AddObstacle(new Wall(3,4));
             map.AddObstacle(new Wall(4,4));
             map.AddObstacle(new Wall(4,3));
             map.AddObstacle(new Wall(4,1));
             
-            Target.Target target = new Target.Target(1 ,5);
+            Target.Target target = new Target.Target();
             
             World world = new World(map, target);
 
-            CameraVision cameraVision =new CameraVisionCenter(map);
-            Camera camera = new AngularCamera(6,6, 0, cameraVision);
+            Camera camera = new AngularCamera(6,6, world.Cameras.Count);
             world.AddCamera(camera);
+            world.InitializeCamera();
                 
                 
             return world;

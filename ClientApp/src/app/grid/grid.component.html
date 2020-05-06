@@ -1,15 +1,34 @@
-<!--<button type="button" mdbBtn color="primary" class="bwaves-light" mdbTooltip="Tooltip on top" placement="top"-->
-<!--        mdbWavesEffect>-->
-<!--  Tooltip on top-->
-<!--</button>-->
+<svg height="320" width="320" class="camera-fov" *ngIf="CamerasList.length > 0">
+<!--  <line *ngFor="let camera of CamerasList"-->
+<!--        [attr.x1]="(camera.x+0.5) * getCellSize() "-->
+<!--        [attr.y1]="(camera.y+ 0.5) * getCellSize()"-->
+<!--        [attr.x2]="(camera.x+ 10) "-->
+<!--        [attr.y2]="(camera.y+ 10)"-->
+<!--        style="stroke:rgb(255,0,0);stroke-width:2" />-->
+  <line *ngFor="let camera of CamerasList"
+        [attr.x1]="(camera.x+0.5) * getCellSize()"
+        [attr.y1]="(camera.y+0.5) * getCellSize()"
+        [attr.x2]="(camera.x+0.5) * getCellSize()+getVectorX(camera.orientation + camera.fov)"
+        [attr.y2]="(camera.y+0.5) * getCellSize()+getVectorY(camera.orientation + camera.fov)"
+        style="stroke:rgb(255,0,0);stroke-width:2" />
+  <line *ngFor="let camera of CamerasList"
+        [attr.x1]="(camera.x+0.5) * getCellSize()"
+        [attr.y1]="(camera.y+0.5) * getCellSize()"
+        [attr.x2]="(camera.x+0.5) * getCellSize()+getVectorX(camera.orientation - camera.fov)"
+        [attr.y2]="(camera.y+0.5) * getCellSize()+getVectorY(camera.orientation - camera.fov)"
+        style="stroke:rgb(255,0,0);stroke-width:2" />
+</svg>
 
-<!--<svg height="210" width="500">-->
-<!--  <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2" />-->
-<!--</svg>-->
+<!--<div *ngFor="let camera of CamerasList">-->
+<!--  {{camera.x}} -  {{camera.y}}  - {{camera.fov}}  - {{camera.orientation}}-->
+<!--</div>-->
 
 <table id="board">
   <tr *ngFor="let y of ordinateArray()">
-    <td *ngFor="let x of abscissaArray()" class="cell" [style.background-color]="getCellColor(x,y)">
+    <td *ngFor="let x of abscissaArray()" class="cell" [style.background-color]="getCellColor(x,y)"
+        [style.width]="getCellSize() +'px'" [style.height]="getCellSize() +'px'"
+        >
+<!--      tooltip="{{IsCellProba(x,y)? this.cells[x][y]:''}}" placement="{{IsCellProba(x,y)? 'top':''}}" delay="50"-->
     </td>
   </tr>
 </table>
