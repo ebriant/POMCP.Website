@@ -2,47 +2,47 @@
   <table id="control">
     <tr>
       <td>
-        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[0][0]">
+        <button type="button" (click)="updateSystem(-1,-1)" [disabled]="isMoving || !movePossibilities[0][0]">
           <i class="fa fa-arrow-circle-o-left fa-2x fa-rotate-45"></i>
         </button>
       </td>
       <td>
         <button type="button"
-                (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[0][1]"
+                (click)="updateSystem(0,-1)" [disabled]="isMoving || !movePossibilities[1][0]"
                 tooltip="move upward" placement="top" delay="50">
           <i class="fa fa-arrow-circle-o-up fa-2x"></i>
         </button>
       </td>
       <td>
-        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[0][2]">
+        <button type="button" (click)="updateSystem(1,-1)" [disabled]="isMoving || !movePossibilities[2][0]">
           <i class="fa fa-arrow-circle-o-up fa-2x fa-rotate-45"></i>
         </button>
       </td>
     </tr>
     <tr>
       <td>
-        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[1][0]">
+        <button type="button" (click)="updateSystem(-1,0)" [disabled]="isMoving || !movePossibilities[0][1]">
           <i class="fa fa-arrow-circle-o-left fa-2x"></i>
         </button>
       </td>
       <td>
-        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[1][1]">
+        <button type="button" (click)="updateSystem(0,0)" [disabled]="isMoving || !movePossibilities[1][1]">
           <i class="fa fa-circle-o fa-2x"></i>
         </button>
       </td>
       <td>
-        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[1][2]">
+        <button type="button" (click)="updateSystem(1,0)" [disabled]="isMoving || !movePossibilities[2][1]">
           <i class="fa fa-arrow-circle-o-right fa-2x"></i>
         </button>
       </td>
     <tr>
       <td>
-        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[2][0]">
+        <button type="button" (click)="updateSystem(-1,1)" [disabled]="isMoving || !movePossibilities[0][2]">
           <i class="fa fa-arrow-circle-o-down fa-2x fa-rotate-45"></i>
         </button>
       </td>
       <td>
-        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movePossibilities[2][1]">
+        <button type="button" (click)="updateSystem(0,1)" [disabled]="isMoving || !movePossibilities[1][2]">
           <i class="fa fa-arrow-circle-o-down fa-2x"></i>
         </button>
       </td>

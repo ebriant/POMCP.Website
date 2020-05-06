@@ -14,7 +14,7 @@ export class BoardComponent implements OnInit {
   public cameraView:  string[][];
   public cameras: Camera[] = [];
   public isMoving = false;
-  public movePossibilities: boolean[][] =[[false, false, false],[false, false, false],[false, false, false]];
+  public movePossibilities: boolean[][] = [[false, false, false],[false, false, false],[false, false, false]];
 
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
@@ -28,38 +28,25 @@ export class BoardComponent implements OnInit {
       this.cameras = result.cameras;
       this.movePossibilities = result.movingOptions;
     }, error => console.error(error));
-
-    // http.get<string[][]>(baseUrl + 'pomcp/proba').subscribe(result => {
-    //   this.proba = result;
-    // }, error => console.error(error));
-    //
-    // http.get<string[][]>(baseUrl + 'pomcp/cameraView').subscribe(result => {
-    //   this.cameraView = result;
-    // }, error => console.error(error));
-    //
-    // http.get<Camera[]>(baseUrl + 'pomcp/cameras').subscribe(result => {
-    //   this.cameras = result;
-    // }, error => console.error(error));
   }
 
   ngOnInit() {
   }
 
   public updateSystem(dx,dy) {
-    this.isMoving = false;
+    this.isMoving = true;
     console.log(dx ,dy);
     let params = new HttpParams();
     params = params.append('dx', dx);
     params = params.append('dy', dy);
-    this.http.get<System>(this.baseUrl + "pomcp/evolve", { params: params }).subscribe(result => {
+    this.http.get<System>(this.baseUrl + "pomcp", { params: params }).subscribe(result => {
       this.trueState = result.trueState;
       this.proba = result.distributionView;
       this.cameraView = result.cameraView;
       this.cameras = result.cameras;
-      this.isMoving = true;
+      this.movePossibilities = result.movingOptions;
+      this.isMoving = false;
     }, error => console.error(error));
-
-
   }
 
 

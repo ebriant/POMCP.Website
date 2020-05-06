@@ -64,9 +64,9 @@ namespace POMCP.Website.Models.Cameras
         {
             Distribution<Observation> o = new Distribution<Observation>();
             if (GetVision(s.CamerasOrientations[Num])[s.X, s.Y])
-                o.setProba(new Observation(true, s.X, s.Y), 1);
+                o.SetProba(new Observation(true, s.X, s.Y), 1);
             else
-                o.setProba(new Observation(false), 1);
+                o.SetProba(new Observation(false), 1);
             return o;
         }
 

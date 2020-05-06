@@ -83,9 +83,9 @@ namespace POMCP.Website.Models.Pomcp
             
             double p;
             foreach (Observation observation in d1.GetKeys()) {
-                p = d1.getProba(observation)*d2.getProba(observation);
+                p = d1.GetProba(observation)*d2.GetProba(observation);
                 if (p>0)
-                    dnew.setProba(observation, p);
+                    dnew.SetProba(observation, p);
             }
             if (dnew.GetKeys().Count > 0) {
                 dnew.Normalise();
@@ -133,7 +133,7 @@ namespace POMCP.Website.Models.Pomcp
         public Distribution<State> UpdateTransition(State s, Action a)
         {
             Distribution<State> d = new Distribution<State>();
-            d.setProba(s, 1);
+            d.SetProba(s, 1);
             return UpdateTransition(d, a);
         }
 
@@ -141,8 +141,8 @@ namespace POMCP.Website.Models.Pomcp
         {
             Distribution<State> d1 = new Distribution<State>();
             foreach (State s in d.GetKeys()) {
-                if (d.getProba(s) > 0)
-                    d1.setProba(GetActionResult(s, a), d.getProba(s));
+                if (d.GetProba(s) > 0)
+                    d1.SetProba(GetActionResult(s, a), d.GetProba(s));
             }
             Distribution<State> dnew = new Distribution<State>();
 
@@ -152,7 +152,7 @@ namespace POMCP.Website.Models.Pomcp
                 transition = World.Target.GetTransition(s1, this.GetAllState(s1));
 
                 foreach (State s2 in transition.GetKeys()){
-                    dnew.setProba(s2, dnew.getProba(s2) + d1.getProba(s1) * transition.getProba(s2));
+                    dnew.SetProba(s2, dnew.GetProba(s2) + d1.GetProba(s1) * transition.GetProba(s2));
                 }
             }
             return dnew;
@@ -178,8 +178,8 @@ namespace POMCP.Website.Models.Pomcp
                         if (c.GetVision(s.CamerasOrientations[c.Num])[s.X,s.Y])
                             visible = true;
                     }
-                    if (!visible && Math.Abs(d.getProba(s)) > 0.001f)
-                        dnew.setProba(s, d.getProba(s));
+                    if (!visible && Math.Abs(d.GetProba(s)) > 0.001f)
+                        dnew.SetProba(s, d.GetProba(s));
                 }
             }
             else
@@ -187,9 +187,9 @@ namespace POMCP.Website.Models.Pomcp
                 foreach (State s in d.GetKeys())
                 {
                     double p = 0;
-                    p += d.getProba(s) * o.getProba(new Observation(true, s.X, s.Y));
+                    p += d.GetProba(s) * o.GetProba(new Observation(true, s.X, s.Y));
                     if (p > 0)
-                        dnew.setProba(s, p);
+                        dnew.SetProba(s, p);
                 }
             }
 

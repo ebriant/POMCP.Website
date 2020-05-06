@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using POMCP.Website.Models;
-using POMCP.Website.Models.Environment;
-using POMCP.Website.Models.Environment.Cells;
 
 namespace POMCP.Website.Controllers
 {
@@ -63,21 +60,38 @@ namespace POMCP.Website.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public SystemView Get([FromQuery] int? dx, [FromQuery] int? dy, [FromQuery] bool? init = false)
         {
             if (init != null && (bool) !init)
             {
+                // if (IsMoveAllowed(dx, dy))
+                _logger.Log(LogLevel.Information, dx + " - " + dy);
+                Models.System.Instance.AdvanceSystem(dx, dy);
                 
+                _logger.Log(LogLevel.Information, "Hi");
             }
             
-            Console.Out.WriteLine(dx + " - " + dy);
+            
+            _logger.Log(LogLevel.Information, "Hi2");
             return new SystemView(Models.System.Instance.GetTrueStateGrid(),
                 Models.System.Instance.GetCameraViewGrid(),
                 Models.System.Instance.GetProbaGrid(),
                 Models.System.Instance.GetCameras(),
                 Models.System.Instance.GetMoveOptions());
         }
-        
+
+        /// <summary>
+        /// Return true if the intended moving is allowed, false either
+        /// </summary>
+        /// <param name="dx"></param>
+        /// <param name="dy"></param>
+        /// <returns></returns>
+        private bool IsMoveAllowed(int dx, int dy)
+        {
+            return Math.Abs(dx) < 2 && Math.Abs(dy) < 2 && Models.System.Instance.IsMoveAllowed(dx,dy);
+        }
     }
     
 }

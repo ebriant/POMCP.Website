@@ -9,7 +9,7 @@
         {
             Distribution<State> d = new Distribution<State>();
             foreach (State s2 in l) {
-                d.setProba(s2, 1);
+                d.SetProba(s2, 1);
             }
             d.Normalise();
             return d;

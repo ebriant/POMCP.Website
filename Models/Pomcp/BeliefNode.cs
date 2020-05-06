@@ -99,7 +99,7 @@ namespace POMCP.Website.Models.Pomcp
         /// <param name="state"></param>
         public void AddState(State state)
         {
-            Belief.setProba(state, Belief.getProba(state) + 1);
+            Belief.SetProba(state, Belief.GetProba(state) + 1);
         }
 
         //
@@ -140,7 +140,7 @@ namespace POMCP.Website.Models.Pomcp
                     {
                         return (action);
                     }
-                    d.setProba(action, 
+                    d.SetProba(action, 
                         actionNode.Value + (C * Math.Sqrt(Math.Log(Occurrence) / actionNode.Occurrence)) - minV);
                     
                 }
@@ -163,7 +163,7 @@ namespace POMCP.Website.Models.Pomcp
             Distribution<State> prob = Belief.GetNormalisedCopy();
             foreach (State state in Belief.GetKeys())
             {
-                Value += Mdp.GetStateValue(state) * prob.getProba(state);
+                Value += Mdp.GetStateValue(state) * prob.GetProba(state);
             }
 
             foreach (ActionNode n in Children)

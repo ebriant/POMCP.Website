@@ -5,17 +5,13 @@ namespace POMCP.Website.Models.Pomcp
 {
 	public class Distribution<T>
 	{
-		/**
-	 * Discrete list of probabilities
-	 */
-		public Dictionary<T, double> Prob { get; }
+		
+		public Dictionary<T, double> Prob { get; private set; }
 
-		public Random rnd = new Random();
+		private Random rnd = new Random();
 
-		/**
-	 * 
-	 */
-		public double getProba(T element)
+		
+		public double GetProba(T element)
 		{
 			// If the element is in the distribution, return its probability
 			if (Prob.ContainsKey(element))
@@ -25,33 +21,20 @@ namespace POMCP.Website.Models.Pomcp
 			return (0);
 		}
 
-		/**
-	 * modifie la proba associee a l'element passe en parametre
-	 */
-		public void setProba(T element, double p)
+		
+		
+		public void SetProba(T element, double p)
 		{
 			Prob[element] = p;
 		}
 
-		/**
-	 * Constructeur genere une densité vide
-	 * 
-	 * attention, ce n'est pas une vraie densité (somme des proba != 1)
-	 * 
-	 * @liste liste des états de la densité
-	 */
+		
 		public Distribution()
 		{
 			Prob = new Dictionary<T, double>();
 		}
-
-		/**
-	 * Constructeur genere une densité avec les memes états mais probabilités
-	 * nulles
-	 * 
-	 * @param liste
-	 *            des états de la densité
-	 */
+		
+		
 		public Distribution(Distribution<T> d)
 		{
 			Prob = new Dictionary<T, double>();
@@ -63,12 +46,7 @@ namespace POMCP.Website.Models.Pomcp
 			}
 		}
 
-		/**
-	 * permet de calculer la norme d'une densite en thoerie retourne 1 mais peut
-	 * servir pour normaliser
-	 * 
-	 * @return somme des probas de la densité
-	 */
+		
 		public double GetNorm()
 		{
 			double c = 0;
@@ -81,31 +59,36 @@ namespace POMCP.Website.Models.Pomcp
 
 		}
 
-		/**
-	 * Normalize the density of probability
-	 */
+		/// <summary>
+		/// Normalize the density of probability
+		/// </summary>
 		public void Normalise()
 		{
 			double norm = GetNorm();
-			foreach (T s in Prob.Keys)
+			Dictionary<T, double> newProb = new Dictionary<T, double>();
+			foreach (KeyValuePair<T,double> pair in Prob)
 			{
-				setProba(s, Prob[s] / norm);
+				newProb[pair.Key] = pair.Value / norm;
 			}
-		}
 
-		/**
-	 * Return a normalized copy of the distribution
-	 */
+			Prob = newProb;
+		}
+		
+		/// <summary>
+		/// Return a normalized copy of the distribution
+		/// </summary>
+		/// <returns></returns>
 		public Distribution<T> GetNormalisedCopy()
 		{
-			Distribution<T> d = clone();
+			Distribution<T> d = Clone();
 			d.Normalise();
 			return d;
 		}
-
-		/**
-	 * Return all the keys of the distibution
-	 */
+		
+		/// <summary>
+		/// Return all the keys of the distibution
+		/// </summary>
+		/// <returns></returns>
 		public Dictionary<T, double>.KeyCollection GetKeys()
 		{
 			return Prob.Keys;
@@ -116,13 +99,13 @@ namespace POMCP.Website.Models.Pomcp
 		{
 			return Prob.ContainsKey(key);
 		}
-
-
-		/**
-	 * fait un tirage aleatoire selon cette densité
-	 * 
-	 * @return l'indice qui aura été selectionné
-	 */
+		
+		
+		//
+		/// <summary>
+		/// Perform a random draw on the distribution
+		/// </summary>
+		/// <returns></returns>
 		public T Draw()
 		{
 			if (Prob.Count == 0) return default(T);
@@ -133,31 +116,19 @@ namespace POMCP.Website.Models.Pomcp
 			while (p > 0 && keys.MoveNext())
 			{
 				s = keys.Current;
-				p = p - getProba(s);
+				p = p - GetProba(s);
 			}
 
 			return s;
 		}
 
-		// /**
-		//  * methode toString
-		//  */
-		// public String toString() {
-		// 	String res = "";
-		// 	for (E clef : prob.keySet()) {
-		// 		res += clef + "->" + df.format(prob.get(clef));
-		// 		res += "\n";
-		// 	}
-		// 	return (res);
-		//
-
-
-		public Distribution<T> clone()
+		
+		public Distribution<T> Clone()
 		{
 			Distribution<T> d = new Distribution<T>();
 			foreach (T e in Prob.Keys)
 			{
-				d.setProba(e, getProba(e));
+				d.SetProba(e, GetProba(e));
 			}
 
 			return d;

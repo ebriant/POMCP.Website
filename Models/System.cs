@@ -25,8 +25,8 @@ namespace POMCP.Website.Models
                 camerasOrientations.Add(-Math.PI / 2);
             }
 
-            d.setProba(new State(6, 1, camerasOrientations), 0.5);
-            d.setProba(new State(6, 2, camerasOrientations), 0.5);
+            d.SetProba(new State(6, 1, camerasOrientations), 0.5);
+            d.SetProba(new State(6, 2, camerasOrientations), 0.5);
             MDP mdp = new MDP(world);
             return new System(world, mdp, d, 500, 3);
         }
@@ -66,7 +66,7 @@ namespace POMCP.Website.Models
         {
             for (int i = 0; i < n; i++)
             {
-                AdvanceSystem(null);
+                AdvanceSystem(null, null);
             }
         }
 
@@ -86,17 +86,19 @@ namespace POMCP.Website.Models
             return _tree.GetBestAction();
         }
 
-        public void AdvanceSystem(State s)
+        public void AdvanceSystem(int? dx, int? dy)
         {
             ActionNode actionNode = GetBestAction();
             LastAction = actionNode.Action;
 
-            if (s != null)
+            
+            if (dx != null && dy != null && World.Map.IsCellFree((int) (TrueState.X + dx), (int) (TrueState.Y + dy)))
             {
-                if (World.Map.IsCellFree(s.X, s.Y))
-                {
-                    TrueState = s;
-                }
+                
+                TrueState = _model.GetActionResult(
+                    new State((int) (TrueState.X + dx), (int) (TrueState.Y + dy), TrueState.CamerasOrientations),
+                    LastAction
+                    );
             }
             else
             {
@@ -195,6 +197,10 @@ namespace POMCP.Website.Models
         }
 
 
+        /// <summary>
+        /// Return a list of the cameras properties for display (X, Y, current orientation and FOV)
+        /// </summary>
+        /// <returns></returns>
         public CameraProperties[] GetCameras()
         {
             List<CameraProperties> result = new List<CameraProperties>();
@@ -207,6 +213,11 @@ namespace POMCP.Website.Models
             return result.ToArray();
         }
 
+        /// <summary>
+        /// Return a matrix representing the possibility of movement from the present state
+        /// options are a 3x3 matrix from (-1,-1) to (+1,+1) 
+        /// </summary>
+        /// <returns></returns>
         public bool[][] GetMoveOptions()
         {
             bool[][] result = new bool[3][];
@@ -220,6 +231,17 @@ namespace POMCP.Website.Models
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Return true if the
+        /// </summary>
+        /// <param name="dx"></param>
+        /// <param name="dy"></param>
+        /// <returns></returns>
+        public bool IsMoveAllowed(int dx, int dy)
+        {
+            return World.Map.IsCellFree(TrueState.X + dx, TrueState.Y + dy);
         }
     }
 }
