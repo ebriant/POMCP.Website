@@ -1,4 +1,4 @@
-import {Component, OnInit, Inject, Input} from '@angular/core';
+import {Component, OnInit, Inject, Input, Output, EventEmitter} from '@angular/core';
 import {Camera} from "../map";
 
 @Component({
@@ -12,13 +12,8 @@ export class GridComponent implements OnInit {
   @Input() camera: boolean;
   @Input() CamerasList: Camera[] = [];
 
-  // @Input()
-  // set item(CamerasList:  Camera[]) {
-  //   console.log('previous item = ', this._item);
-  //   console.log('currently selected item=', val);
-  //   this._item = val;
-  //   this._item.status = 'In Process';
-  // }
+
+  @Output() cellChanged = new EventEmitter<number[]>();
 
   CameraVector: number[][] = [];
 
@@ -53,9 +48,8 @@ export class GridComponent implements OnInit {
      return !isNaN(Number(this.cells[x][y]))
   }
 
-
   getCellColor(x,y) {
-    if (typeof(this.cells) == "undefined") {
+    if (!this.cells) {
       return "#F2F2F2"
     }
     if (!this.IsCellProba(x,y)){
@@ -101,25 +95,6 @@ export class GridComponent implements OnInit {
     }
     return "rgb(" + newColor[0] + ","  + newColor[1] + "," + newColor[2] + ")"
 
-  }
-
-  hexToRGB(h) {
-    let r = 0, g = 0, b = 0;
-
-    // 3 digits
-    if (h.length == 4) {
-      let r = "0x" + h[1] + h[1];
-      let g = "0x" + h[2] + h[2];
-      let b = "0x" + h[3] + h[3];
-
-      // 6 digits
-    } else if (h.length == 7) {
-      let r = "0x" + h[1] + h[2];
-      let g = "0x" + h[3] + h[4];
-      let b = "0x" + h[5] + h[6];
-    }
-
-    return "rgb("+ +r + "," + +g + "," + +b + ")";
   }
 
   getVectorX(angle: number) {

@@ -81,3 +81,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   opacity: 1;
 }
 
+.cell {
+  border: 1px solid #262626;
+  background-color: #F2F2F2;
+}
+
+.wall {
+  background-color: #262626;
+}
+
+.glass {
+  background-color: #ACC8D9;
+}
+
+.target {
+  background-color: #6ED93D;
+}
+
+.camera {
+  background-color: #F28705;
+}

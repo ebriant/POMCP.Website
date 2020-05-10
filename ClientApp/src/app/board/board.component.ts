@@ -10,18 +10,19 @@ import {Camera, System} from "../map";
 export class BoardComponent implements OnInit {
 
   public trueState: string[][];
-  public proba:  string[][];
-  public cameraView:  string[][];
+  public proba: string[][];
+  public cameraView: string[][];
   public cameras: Camera[] = [];
   public isMoving = false;
-  public movePossibilities: boolean[][] = [[false, false, false],[false, false, false],[false, false, false]];
+  public movePossibilities: boolean[][] = [[false, false, false], [false, false, false], [false, false, false]];
 
+  public changeType;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
 
     let params = new HttpParams();
     params = params.append('init', "true");
-    http.get<System>(baseUrl + 'pomcp', { params: params }).subscribe(result => {
+    http.get<System>(baseUrl + 'pomcp', {params: params}).subscribe(result => {
       this.trueState = result.trueState;
       this.proba = result.distributionView;
       this.cameraView = result.cameraView;
@@ -33,13 +34,12 @@ export class BoardComponent implements OnInit {
   ngOnInit() {
   }
 
-  public updateSystem(dx,dy) {
+  public updateSystem(dx, dy) {
     this.isMoving = true;
-    console.log(dx ,dy);
     let params = new HttpParams();
     params = params.append('dx', dx);
     params = params.append('dy', dy);
-    this.http.get<System>(this.baseUrl + "pomcp", { params: params }).subscribe(result => {
+    this.http.get<System>(this.baseUrl + "pomcp", {params: params}).subscribe(result => {
       this.trueState = result.trueState;
       this.proba = result.distributionView;
       this.cameraView = result.cameraView;
@@ -49,6 +49,13 @@ export class BoardComponent implements OnInit {
     }, error => console.error(error));
   }
 
+  isInMap(x,y): boolean{
+    return (x > 0 && y > 0 && x<this.trueState.length-1 && y<this.trueState[0].length-1)
+  }
 
-
+  changeCell(coord: number[]) {
+    if (this.changeType && this.isInMap(coord[0],coord[1])) {
+      this.trueState[coord[0]][coord[1]] = this.changeType;
+    }
+  }
 }

@@ -66,15 +66,8 @@ namespace POMCP.Website.Controllers
         {
             if (init != null && (bool) !init)
             {
-                // if (IsMoveAllowed(dx, dy))
-                _logger.Log(LogLevel.Information, dx + " - " + dy);
                 Models.System.Instance.AdvanceSystem(dx, dy);
-                
-                _logger.Log(LogLevel.Information, "Hi");
             }
-            
-            
-            _logger.Log(LogLevel.Information, "Hi2");
             return new SystemView(Models.System.Instance.GetTrueStateGrid(),
                 Models.System.Instance.GetCameraViewGrid(),
                 Models.System.Instance.GetProbaGrid(),

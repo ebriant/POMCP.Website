@@ -1,6 +1,6 @@
 <app-getting-started #gettingStartedComponent></app-getting-started>
 
-<button type="button" (click)="gettingStartedComponent.pageCounter=0">Getting Started</button>
+<button type="button" class="btn" (click)="gettingStartedComponent.pageCounter=0">Getting Started</button>
 
 <div style="padding: 10px; display: inline-block">
   <table id="control">
@@ -61,21 +61,20 @@
 </div>
 
 <div id="legend">
-  <div class="color-box" style="background-color: #F2F2F2;"></div>
+  <div class="color-box cell" (click)="changeType='empty'"></div>
   Empty space
 
-  <div class="color-box" style="background-color: #262626;"></div>
+  <div class="color-box cell wall" (click)="changeType='wall'"></div>
   Wall
 
-  <div class="color-box" style="background-color: #ACC8D9;"></div>
+  <div class="color-box cell glass" (click)="changeType='glass'"></div>
   Glass
 
-  <div class="color-box" style="background-color: #6ED93D;"></div>
+  <div class="color-box cell target"></div>
   Target
 
-  <div class="color-box" style="background-color: #F28705;"></div>
+  <div class="color-box cell camera"></div>
   Camera
-
 
 </div>
 
@@ -83,17 +82,17 @@
   <div class="row">
     <div class="col-sm">
       <div class="grid-title">True state of the system</div>
-      <app-grid [cells]="trueState"></app-grid>
+      <app-grid [cells]="trueState" (cellChanged)="changeCell($event)"></app-grid>
     </div>
 
     <div class="col-sm">
       <div class="grid-title">Belief state of the system</div>
-      <app-grid [cells]="proba"></app-grid>
+      <app-grid [cells]="proba" (cellChanged)="changeCell($event)"></app-grid>
     </div>
 
     <div class="col-sm">
       <div class="grid-title">Observation of the cameras</div>
-      <app-grid [cells]="cameraView" [CamerasList]="cameras"></app-grid>
+      <app-grid [cells]="cameraView" [CamerasList]="cameras" (cellChanged)="changeCell($event)"></app-grid>
     </div>
   </div>
 </div>
