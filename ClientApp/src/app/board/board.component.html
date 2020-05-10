@@ -1,5 +1,6 @@
-<app-getting-started></app-getting-started>
+<app-getting-started #gettingStartedComponent></app-getting-started>
 
+<button type="button" (click)="gettingStartedComponent.pageCounter=0">Getting Started</button>
 
 <div style="padding: 10px; display: inline-block">
   <table id="control">
@@ -86,7 +87,7 @@
     </div>
 
     <div class="col-sm">
-      <div class="grid-title">True state of the system</div>
+      <div class="grid-title">Belief state of the system</div>
       <app-grid [cells]="proba"></app-grid>
     </div>
 

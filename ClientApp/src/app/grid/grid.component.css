@@ -1,5 +1,6 @@
 .cell {
   border: 1px solid black;
+  background-color: #F2F2F2;
 }
 
 .btn {
@@ -16,4 +17,21 @@
   position: absolute;
   margin-top:20px
 }
+
+.wall {
+  background-color: #262626;
+}
+
+.glass {
+  background-color: #ACC8D9;
+}
+
+.target {
+  background-color: #e01a76;
+}
+
+.camera {
+  background-color: #F28705;
+}
+
 
