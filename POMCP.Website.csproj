@@ -22,10 +22,13 @@
     <Content Remove="$(SpaRoot)**" />
     <Content Include="ClientApp\src\app\board\board.component.css" />
     <Content Include="ClientApp\src\app\board\board.component.html" />
+    <Content Include="ClientApp\src\app\getting-started\getting-started.component.css" />
+    <Content Include="ClientApp\src\app\getting-started\getting-started.component.html" />
     <Content Include="ClientApp\src\app\grid\grid.component.css" />
     <Content Include="ClientApp\src\app\grid\grid.component.html" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    <None Include="ClientApp\src\app\getting-started\message.ts" />
     <None Include="ClientApp\src\app\map.ts" />
     <None Include="ClientApp\src\app\tooltip.directive.ts" />
   </ItemGroup>

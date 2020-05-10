@@ -1,4 +1,7 @@
-<div style="padding: 10px">
+<app-getting-started></app-getting-started>
+
+
+<div style="padding: 10px; display: inline-block">
   <table id="control">
     <tr>
       <td>
@@ -55,17 +58,40 @@
 
   </table>
 </div>
+
+<div id="legend">
+  <div class="color-box" style="background-color: #F2F2F2;"></div>
+  Empty space
+
+  <div class="color-box" style="background-color: #262626;"></div>
+  Wall
+
+  <div class="color-box" style="background-color: #ACC8D9;"></div>
+  Glass
+
+  <div class="color-box" style="background-color: #6ED93D;"></div>
+  Target
+
+  <div class="color-box" style="background-color: #F28705;"></div>
+  Camera
+
+
+</div>
+
 <div class="container">
   <div class="row">
     <div class="col-sm">
+      <div class="grid-title">True state of the system</div>
       <app-grid [cells]="trueState"></app-grid>
     </div>
 
     <div class="col-sm">
+      <div class="grid-title">True state of the system</div>
       <app-grid [cells]="proba"></app-grid>
     </div>
 
     <div class="col-sm">
+      <div class="grid-title">Observation of the cameras</div>
       <app-grid [cells]="cameraView" [CamerasList]="cameras"></app-grid>
     </div>
   </div>

@@ -7,23 +7,23 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import {GridComponent} from "./grid/grid.component";
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BoardComponent } from './board/board.component';
 import { TooltipDirective } from './tooltip.directive';
+import { GettingStartedComponent } from './getting-started/getting-started.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    CounterComponent,
     FetchDataComponent,
     GridComponent,
     BoardComponent,
     TooltipDirective,
+    GettingStartedComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -31,9 +31,6 @@ import { TooltipDirective } from './tooltip.directive';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: GridComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
-      // { path: 'test', component: GridComponent},
     ]),
     NoopAnimationsModule
   ],

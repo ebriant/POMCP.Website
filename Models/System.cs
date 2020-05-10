@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using POMCP.Website.Controllers;
 using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
+using POMCP.Website.Models.Environment.Cells;
 using POMCP.Website.Models.Pomcp;
 using Action = POMCP.Website.Models.Pomcp.Action;
 
@@ -133,7 +134,7 @@ namespace POMCP.Website.Models
         {
             string[][] cellArray = World.Map.GetCellsArray();
             cellArray[TrueState.X][TrueState.Y] = "target";
-            return cellArray;
+            return AddWalls(cellArray);
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace POMCP.Website.Models
                 cellArray[key.X][key.Y] = keyValuePair.Value.ToString();
             }
 
-            return cellArray;
+            return AddWalls(cellArray);
         }
 
         /// <summary>
@@ -193,7 +194,7 @@ namespace POMCP.Website.Models
                 cellArray[camera.X][camera.Y] = "camera";
             }
 
-            return cellArray;
+            return AddWalls(cellArray);
         }
 
 
@@ -206,7 +207,7 @@ namespace POMCP.Website.Models
             List<CameraProperties> result = new List<CameraProperties>();
             foreach (Camera camera in World.Cameras)
             {
-                result.Add(new CameraProperties(camera.X, camera.Y
+                result.Add(new CameraProperties(camera.X+1, camera.Y+1
                     , TrueState.CamerasOrientations[camera.Num], camera.FOV));
             }
 
@@ -242,6 +243,33 @@ namespace POMCP.Website.Models
         public bool IsMoveAllowed(int dx, int dy)
         {
             return World.Map.IsCellFree(TrueState.X + dx, TrueState.Y + dy);
+        }
+        
+        /// <summary>
+        /// Add walls to the cell array representing the map. The wall do not technically exist in the model
+        /// but are added for visualization to represent the boundaries of the map.
+        /// </summary>
+        /// <param name="cellArray"></param>
+        /// <returns></returns>
+        public string[][] AddWalls(string[][] cellArray)
+        {
+            string[][] result = new string[World.Map.Dx+2][];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = new string[World.Map.Dy+2];
+                for (int j = 0; j < result[i].Length; j++)
+                {
+                    if (i ==0 || j==0 || i == result.Length-1 || j == result[i].Length-1)
+                        result[i][j] = Wall.CellTypeString;
+                    else
+                    {
+                        result[i][j] = cellArray[i - 1][j - 1];
+
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

@@ -12,10 +12,8 @@ namespace POMCP.Website.Models.Cameras
 
 	    public bool[,] VisibleCells;
 
-	    private CameraVision _vision;
 
-		   
-		 /// <summary>
+	    /// <summary>
 		 /// Number of the Camera in the world
 		 /// </summary>
         public int Num { get; }
@@ -44,7 +42,8 @@ namespace POMCP.Website.Models.Cameras
         
         public abstract List<double> GetActions(double angle);
 	
-        public virtual double GetValue(State state) {
+        public virtual double GetValue(State state) 
+        {
             return GetVision(state.CamerasOrientations[Num])[state.X,state.Y] ? 1 : 0;
         }
 

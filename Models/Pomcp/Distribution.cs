@@ -35,18 +35,6 @@ namespace POMCP.Website.Models.Pomcp
 		}
 		
 		
-		public Distribution(Distribution<T> d)
-		{
-			Prob = new Dictionary<T, double>();
-
-			// creer les probabilités constantes à chaque état
-			foreach (T s in d.Prob.Keys)
-			{
-				Prob[s] = 0;
-			}
-		}
-
-		
 		public double GetNorm()
 		{
 			double c = 0;
@@ -54,7 +42,6 @@ namespace POMCP.Website.Models.Pomcp
 			{
 				c += s;
 			}
-
 			return c;
 
 		}
@@ -70,7 +57,6 @@ namespace POMCP.Website.Models.Pomcp
 			{
 				newProb[pair.Key] = pair.Value / norm;
 			}
-
 			Prob = newProb;
 		}
 		
@@ -80,8 +66,12 @@ namespace POMCP.Website.Models.Pomcp
 		/// <returns></returns>
 		public Distribution<T> GetNormalisedCopy()
 		{
-			Distribution<T> d = Clone();
-			d.Normalise();
+			Distribution<T> d = new Distribution<T>();
+			double norm = GetNorm();
+			foreach (KeyValuePair<T,double> pair in Prob)
+			{
+				d.SetProba(pair.Key, pair.Value / norm);
+			}
 			return d;
 		}
 		
@@ -118,21 +108,7 @@ namespace POMCP.Website.Models.Pomcp
 				s = keys.Current;
 				p = p - GetProba(s);
 			}
-
 			return s;
 		}
-
-		
-		public Distribution<T> Clone()
-		{
-			Distribution<T> d = new Distribution<T>();
-			foreach (T e in Prob.Keys)
-			{
-				d.SetProba(e, GetProba(e));
-			}
-
-			return d;
-		}
-
 	}
 }

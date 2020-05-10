@@ -18,3 +18,25 @@
 #control button:disabled i {
   color: #BABCBF;
 }
+
+.grid-title {
+   text-align: center;
+ }
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  position: relative;
+  left: 5px;
+  top: 5px;
+  margin: 0 5px;
+}
+
+.header-element {
+  display: inline-block;
+}
+
+#legend {
+
+}

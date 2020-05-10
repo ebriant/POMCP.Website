@@ -97,7 +97,7 @@ export class GridComponent implements OnInit {
     let color2 = [110,217,61];
     let newColor = [];
     for (let i = 0; i<3; i++) {
-      newColor[i] = color1[i] + (color2[i] - color1[i]) * p
+      newColor[i] = color2[i] + (color1[i] - color2[i]) * (1-p)**2;
     }
     return "rgb(" + newColor[0] + ","  + newColor[1] + "," + newColor[2] + ")"
 

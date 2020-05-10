@@ -19,7 +19,7 @@ using System.Threading.Tasks.Dataflow;
 			Dx = tx;
 			Dy = ty;
 			Cells = new Cell[Dx,Dy];
-			AddOutsideWalls();
+			// AddOutsideWalls();
 		}
 		
 		/// <summary>
@@ -93,5 +93,6 @@ using System.Threading.Tasks.Dataflow;
 			}
 			return result;
 		}
+		
 	}
 }
