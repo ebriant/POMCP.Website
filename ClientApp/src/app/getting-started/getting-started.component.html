@@ -1,0 +1,11 @@
+<div id="tutorial" class="card" *ngIf="pageCounter < message.length">
+
+  <span style ="position: absolute; top:0; right:5px">{{pageCounter+1}}/{{message.length}}</span>
+  <div class="card-body content" [innerHTML]="message[pageCounter]"></div>
+  <div class="card-footer" style="text-align: right">
+    <button type="button" class ="btn btn-primary" (click)="decreaseCount()" [disabled]="pageCounter<1">Previous</button>
+    <button type="button" class ="btn btn-primary" (click)="increaseCount()">Next</button>
+    <button type="button" class ="btn btn-secondary" (click)="pageCounter=message.length">Skip</button>
+
+  </div>
+</div>
