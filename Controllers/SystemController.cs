@@ -30,22 +30,24 @@ namespace POMCP.Website.Controllers
     
     public struct SystemView
     {
-        public string[][] TrueState { get; }
-        public string[][] CameraView { get; }
-        public string[][] DistributionView { get; }
+        public string[][] Map { get; }
+        public int[] TrueState { get; }
         public CameraProperties[] Cameras { get; }
-
+        public double[][] Probabilities { get; }
+        public int[][] CamerasVision { get; }
         public bool[][] MovingOptions { get; }
 
-        public SystemView(string[][] trueState, string[][] cameraView, string[][] distributionView, CameraProperties[] cameras, bool[][] movingOptions)
+        public SystemView(string[][] map, int[] trueState, CameraProperties[] cameras, double[][] probabilities, int[][] camerasVision, bool[][] movingOptions)
         {
+            Map = map;
             TrueState = trueState;
-            CameraView = cameraView;
-            DistributionView = distributionView;
             Cameras = cameras;
+            Probabilities = probabilities;
+            CamerasVision = camerasVision;
             MovingOptions = movingOptions;
         }
     }
+    
     
     [ApiController]
     [Route("[controller]")]
@@ -60,19 +62,28 @@ namespace POMCP.Website.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         public SystemView Get([FromQuery] int? dx, [FromQuery] int? dy, [FromQuery] bool? init = false)
         {
             if (init != null && (bool) !init)
             {
+                
                 Models.System.Instance.AdvanceSystem(dx, dy);
             }
-            return new SystemView(Models.System.Instance.GetTrueStateGrid(),
-                Models.System.Instance.GetCameraViewGrid(),
-                Models.System.Instance.GetProbaGrid(),
-                Models.System.Instance.GetCameras(),
-                Models.System.Instance.GetMoveOptions());
+            Models.System s = Models.System.Instance;
+
+
+            return new SystemView(
+                s.GetMapArray(), 
+                new[] {s.TrueState.X+1, s.TrueState.Y+1}, 
+                s.GetCameras(), 
+                s.GetProbaGrid(), 
+                s.GetCameraViewGrid(),
+                s.GetMoveOptions());
+
+            // [s.TrueState.X, s.TrueState.Y],
+            // Models.System.Instance.GetProbaGrid(),
+            // Models.System.Instance.GetCameras(),
+            // Models.System.Instance.GetMoveOptions());
         }
 
         /// <summary>

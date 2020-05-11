@@ -101,3 +101,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .camera {
   background-color: #F28705;
 }
+
+.unobservable {
+  background-color: #727372;
+}
+
+.observable {
+  background-color: #BFBFBF;
+}

@@ -43,7 +43,7 @@ namespace POMCP.Website.Models
 
         private Action LastAction { get; set; }
 
-        private State TrueState { get; set; }
+        public State TrueState { get; set; }
 
         private BeliefNode LastNode { get; } = null;
 
@@ -130,38 +130,75 @@ namespace POMCP.Website.Models
         /// Return the grid describing the true state of the system
         /// </summary>
         /// <returns></returns>
-        public string[][] GetTrueStateGrid()
+        public string[][] GetMapArray()
         {
             string[][] cellArray = World.Map.GetCellsArray();
-            cellArray[TrueState.X][TrueState.Y] = "target";
             return AddWalls(cellArray);
         }
+        
 
+        /// <summary>
+        /// Add walls to the cell array representing the map. The wall do not technically exist in the model
+        /// but are added for visualization to represent the boundaries of the map.
+        /// </summary>
+        /// <param name="cellArray"></param>
+        /// <returns></returns>
+        public string[][] AddWalls(string[][] cellArray)
+        {
+            string[][] result = new string[cellArray.Length+2][];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = new string[cellArray[0].Length+2];
+                for (int j = 0; j < result[i].Length; j++)
+                {
+                    if (i ==0 || j==0 || i == result.Length-1 || j == result[i].Length-1)
+                        result[i][j] = Wall.CellTypeString;
+                    else
+                    {
+                        result[i][j] = cellArray[i - 1][j - 1];
+                    }
+                }
+            }
+            return result;
+        }
+
+        
+        
         /// <summary>
         /// Return the grid describing the current distribution of the system
         /// (the probabilities of the target for every cell)
         /// </summary>
         /// <returns></returns>
-        public string[][] GetProbaGrid()
+        public double[][] GetProbaGrid()
         {
-            string[][] cellArray = World.Map.GetCellsArray();
+            // Size is map size +2 to account for the walls
+            double[][] cellArray = new double[World.Map.Dx+2][];
+            for (int i = 0; i < cellArray.Length; i++)
+            {
+                cellArray[i] = new double[World.Map.Dy+2];
+            }
             foreach (KeyValuePair<State, double> keyValuePair in CurrentDistribution.Prob)
             {
                 State key = keyValuePair.Key;
-                cellArray[key.X][key.Y] = keyValuePair.Value.ToString();
+                cellArray[key.X+1][key.Y+1] = keyValuePair.Value;
             }
 
-            return AddWalls(cellArray);
+            return cellArray;
         }
+        
 
         /// <summary>
-        /// Return the view of the camera
+        /// Return the view of the camera: 0 is invisible to the camera, 1 is potentially visible, 2 is observed
         /// </summary>
         /// <returns></returns>
-        public string[][] GetCameraViewGrid()
+        public int[][] GetCameraViewGrid()
         {
-            string[][] cellArray = World.Map.GetCellsArray("invisible");
-
+            int[][] cellArray = new int[World.Map.Dx+2][];
+            for (int i = 0; i < cellArray.Length; i++)
+            {
+                cellArray[i] = new int[World.Map.Dy+2];
+            }
+            
             foreach (Camera camera in World.Cameras)
             {
                 for (int i = 0; i < camera.VisibleCells.GetLength(0); i++)
@@ -169,7 +206,7 @@ namespace POMCP.Website.Models
                     for (int j = 0; j < camera.VisibleCells.GetLength(1); j++)
                     {
                         if (camera.VisibleCells[i, j])
-                            cellArray[i][j] = "visible";
+                            cellArray[i+1][j+1] = 1;
                     }
                 }
             }
@@ -183,18 +220,12 @@ namespace POMCP.Website.Models
                     {
                         if (vision[i, j])
                         {
-                            if (i == TrueState.X & j == TrueState.Y)
-                                cellArray[i][j] = "target";
-                            else
-                                cellArray[i][j] = "undefined";
+                            cellArray[i+1][j+1] = 2;
                         }
                     }
                 }
-
-                cellArray[camera.X][camera.Y] = "camera";
             }
-
-            return AddWalls(cellArray);
+            return cellArray;
         }
 
 
@@ -230,7 +261,6 @@ namespace POMCP.Website.Models
                     result[i][j] = World.Map.IsCellFree(TrueState.X + i - 1, TrueState.Y + j - 1);
                 }
             }
-
             return result;
         }
 
@@ -243,33 +273,6 @@ namespace POMCP.Website.Models
         public bool IsMoveAllowed(int dx, int dy)
         {
             return World.Map.IsCellFree(TrueState.X + dx, TrueState.Y + dy);
-        }
-        
-        /// <summary>
-        /// Add walls to the cell array representing the map. The wall do not technically exist in the model
-        /// but are added for visualization to represent the boundaries of the map.
-        /// </summary>
-        /// <param name="cellArray"></param>
-        /// <returns></returns>
-        public string[][] AddWalls(string[][] cellArray)
-        {
-            string[][] result = new string[World.Map.Dx+2][];
-            for (int i = 0; i < result.Length; i++)
-            {
-                result[i] = new string[World.Map.Dy+2];
-                for (int j = 0; j < result[i].Length; j++)
-                {
-                    if (i ==0 || j==0 || i == result.Length-1 || j == result[i].Length-1)
-                        result[i][j] = Wall.CellTypeString;
-                    else
-                    {
-                        result[i][j] = cellArray[i - 1][j - 1];
-
-                    }
-                }
-            }
-
-            return result;
         }
     }
 }

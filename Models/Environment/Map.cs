@@ -72,7 +72,7 @@ using System.Threading.Tasks.Dataflow;
 			return x >= 0 && x < Dx && y >= 0 && y < Dy;
 		}
 
-		public string[][] GetCellsArray(string defaultString = "undefined")
+		public string[][] GetCellsArray(string defaultString = "")
 		{
 			string[][] result = new string[Dx][];
 			for (int i = 0; i < Dx; i++)

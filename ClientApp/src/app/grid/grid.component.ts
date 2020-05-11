@@ -8,10 +8,12 @@ import {Camera} from "../map";
 })
 export class GridComponent implements OnInit {
 
-  @Input() cells: string[][];
-  @Input() camera: boolean;
-  @Input() CamerasList: Camera[] = [];
 
+  @Input() map: string[][];
+  @Input() camerasList: Camera[] = [];
+  @Input() trueState: number[];
+  @Input() probabilities: number[];
+  @Input() cameraVision: number[][];
 
   @Output() cellChanged = new EventEmitter<number[]>();
 
@@ -24,62 +26,69 @@ export class GridComponent implements OnInit {
   }
 
   abscissaArray(): number[] {
-    if (typeof(this.cells) == "undefined") {
+    if (!this.map) {
       return []
     }
-    return Array.from(Array(this.cells.length).keys())
+    return Array.from(Array(this.map.length).keys())
   }
 
   ordinateArray(): number[] {
-    if (typeof(this.cells) == "undefined") {
+    if (!this.map) {
       return []
     }
-    return Array.from(Array(this.cells[0].length).keys())
+    return Array.from(Array(this.map[0].length).keys())
   }
 
   getCellSize() {
-    if (typeof(this.cells) == "undefined") {
+    if (!this.map) {
       return 0
     }
-    return Math.round(320 / this.cells.length);
+    return Math.round(320 / this.map.length);
   }
 
-  IsCellProba(x,y) :boolean {
-     return !isNaN(Number(this.cells[x][y]))
+  getCellClass(x:number, y:number) {
+    if (!this.map) {
+      return "";
+    }
+
+    switch(this.map[x][y]) {
+      case "wall": {
+        return "wall";
+      }
+      case "glass": {
+        return "glass";
+      }
+    }
+
+    for (let camera of this.camerasList) {
+      if (x == camera.x && y == camera.y) {
+        return "camera";
+      }
+    }
+
+    if (this.cameraVision) {
+      if (this.cameraVision[x][y] == 0) {
+          return "unobservable"
+      }
+      if (this.cameraVision[x][y] == 1) {
+          return "observable"
+      }
+    }
+
+    if (this.trueState && x == this.trueState[0] && y == this.trueState[1]) {
+      return "target";
+    }
+
+
+    return "";
   }
 
   getCellColor(x,y) {
-    if (!this.cells) {
-      return "#F2F2F2"
+    if (!this.probabilities || !this.probabilities[x][y]) {
+      return ""
     }
-    if (!this.IsCellProba(x,y)){
-      switch(this.cells[x][y]) {
-        case "wall": {
-          return "#262626";
-        }
-        case "glass": {
-          return "#ACC8D9";
-        }
-        case "target": {
-          return "#6ED93D";
-        }
-        case "invisible": {
-          return "#727372"
-        }
-        case "visible": {
-          return "#BFBFBF"
-        }
-        case "camera": {
-          return "#F28705"
-        }
-        default: {
-          return "#F2F2F2";
-        }
-      }
-    }
-    else {
-      return this.getColorProba(Number(this.cells[x][y]));
-    }
+    return this.getColorProba(this.probabilities[x][y]);
+
   }
 
   /**

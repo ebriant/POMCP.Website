@@ -9,12 +9,15 @@ import {Camera, System} from "../map";
 })
 export class BoardComponent implements OnInit {
 
-  public trueState: string[][];
-  public proba: string[][];
-  public cameraView: string[][];
+
+  public map: string[][];
+  public trueState: number[];
+  public probabilities: number[][];
+  public camerasVision: number[][];
   public cameras: Camera[] = [];
+  public movingOptions: boolean[][] = [[false, false, false], [false, false, false], [false, false, false]];
+
   public isMoving = false;
-  public movePossibilities: boolean[][] = [[false, false, false], [false, false, false], [false, false, false]];
 
   public changeType;
 
@@ -23,11 +26,12 @@ export class BoardComponent implements OnInit {
     let params = new HttpParams();
     params = params.append('init', "true");
     http.get<System>(baseUrl + 'pomcp', {params: params}).subscribe(result => {
+      this.map = result.map;
       this.trueState = result.trueState;
-      this.proba = result.distributionView;
-      this.cameraView = result.cameraView;
+      this.probabilities = result.probabilities;
+      this.camerasVision = result.camerasVision;
       this.cameras = result.cameras;
-      this.movePossibilities = result.movingOptions;
+      this.movingOptions = result.movingOptions;
     }, error => console.error(error));
   }
 
@@ -40,22 +44,24 @@ export class BoardComponent implements OnInit {
     params = params.append('dx', dx);
     params = params.append('dy', dy);
     this.http.get<System>(this.baseUrl + "pomcp", {params: params}).subscribe(result => {
+      this.map = result.map;
       this.trueState = result.trueState;
-      this.proba = result.distributionView;
-      this.cameraView = result.cameraView;
+      this.probabilities = result.probabilities;
+      this.camerasVision = result.camerasVision;
       this.cameras = result.cameras;
-      this.movePossibilities = result.movingOptions;
+      this.movingOptions = result.movingOptions;
       this.isMoving = false;
     }, error => console.error(error));
   }
 
   isInMap(x,y): boolean{
-    return (x > 0 && y > 0 && x<this.trueState.length-1 && y<this.trueState[0].length-1)
+    return (x > 0 && y > 0 && x<this.map.length-1 && y<this.map[0].length-1
+      && !(x == this.trueState[0] && y == this.trueState[1]))
   }
 
   changeCell(coord: number[]) {
     if (this.changeType && this.isInMap(coord[0],coord[1])) {
-      this.trueState[coord[0]][coord[1]] = this.changeType;
+      this.map[coord[0]][coord[1]] = this.changeType;
     }
   }
 }
