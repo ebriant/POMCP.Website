@@ -19,7 +19,8 @@ export class BoardComponent implements OnInit {
 
   public isMoving = false;
 
-  public changeType;
+  public cellChangeType;
+  public cellChangeActive = false;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
 
@@ -59,9 +60,45 @@ export class BoardComponent implements OnInit {
       && !(x == this.trueState[0] && y == this.trueState[1]))
   }
 
-  changeCell(coord: number[]) {
-    if (this.changeType && this.isInMap(coord[0],coord[1])) {
-      this.map[coord[0]][coord[1]] = this.changeType;
+  isCellFree(x,y): boolean {
+    let result = this.isInMap(x,y);
+
+    result = result && !(x == this.trueState[0] && y == this.trueState[1]);
+    for (let camera of this.cameras) {
+      result = result && !(x == camera.x && y == camera.y);
     }
+
+    return result;
+  }
+
+  changeCell(coord: number[]) {
+    if (this.cellChangeActive && this.isCellFree(coord[0],coord[1])) {
+      // this.map[coord[0]][coord[1]] = this.cellChangeType;
+      let params = new HttpParams();
+      params = params.append('x', String(coord[0]));
+      params = params.append('y', String(coord[1]));
+      params = params.append('cellType', this.cellChangeType);
+
+
+      this.http.get<System>(this.baseUrl + "pomcp/modifyCell", {params: params}).subscribe(result => {
+        this.map = result.map;
+        this.trueState = result.trueState;
+        this.probabilities = result.probabilities;
+        this.camerasVision = result.camerasVision;
+        this.cameras = result.cameras;
+        this.movingOptions = result.movingOptions;
+      }, error => console.error(error));
+    }
+  }
+
+  setCellChangeType(typeString: string) {
+    if (this.cellChangeActive && this.cellChangeType == typeString) {
+      this.cellChangeActive = false;
+    }
+    else {
+      this.cellChangeType = typeString;
+      this.cellChangeActive = true;
+    }
+
   }
 }

@@ -15,13 +15,14 @@
 
 <table id="board">
   <tr *ngFor="let y of ordinateArray()">
-    <td *ngFor="let x of abscissaArray()" class="cell" [style.background-color]="getCellColor(x,y)" [ngClass]="getCellClass(x,y)"
+    <td *ngFor="let x of abscissaArray()" class="cell" style="text-align: center;"
+        [style.background-color]="getCellColor(x,y)" [ngClass]="getCellClass(x,y)"
         [style.width]="getCellSize() +'px'" [style.height]="getCellSize() +'px'"
-        (click)="cellChanged.emit([x,y])">
+        (mousedown)="cellClick(x,y)" (mouseenter)="cellOver(x,y)" (mouseup)="isClicking=false">
+<!--      TODO solve clicking for android-->
 
-<!--    <td *ngFor="let x of abscissaArray()" class="cell" [ngClass]="cells[x][y]" [style.background-color]="getCellColor(x,y)"-->
-<!--        [style.width]="getCellSize() +'px'" [style.height]="getCellSize() +'px'">-->
-<!--      <i class="fa fa-video-camera" style="position: absolute"></i>-->
+      <i *ngIf="getCellClass(x,y) == 'camera'" class="fa fa-video-camera" style="text-align: center;"></i>
+
     </td>
   </tr>
 </table>

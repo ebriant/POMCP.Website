@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Dynamic;
 using Microsoft.AspNetCore.Authentication;
 using POMCP.Website.Controllers;
@@ -11,6 +12,50 @@ using Action = POMCP.Website.Models.Pomcp.Action;
 
 namespace POMCP.Website.Models
 {
+    public struct CameraProperties
+    {
+        public int X { get; }
+        public int Y { get; }
+        public double Orientation { get; }
+        public double Fov { get; }
+
+
+        public CameraProperties(int x, int y, double orientation, double fov)
+        {
+            X = x;
+            Y = y;
+            Orientation = orientation;
+            Fov = fov;
+        }
+
+        public override string ToString()
+        {
+            return "Camera. X:" + X + ", Y: " + Y + ", Ori: " + Orientation + ", FOV: " + Fov;
+        }
+    }
+
+    public struct SystemView
+    {
+        public string[][] Map { get; }
+        public int[] TrueState { get; }
+        public CameraProperties[] Cameras { get; }
+        public double[][] Probabilities { get; }
+        public int[][] CamerasVision { get; }
+        public bool[][] MovingOptions { get; }
+
+        public SystemView(string[][] map, int[] trueState, CameraProperties[] cameras, double[][] probabilities,
+            int[][] camerasVision, bool[][] movingOptions)
+        {
+            Map = map;
+            TrueState = trueState;
+            Cameras = cameras;
+            Probabilities = probabilities;
+            CamerasVision = camerasVision;
+            MovingOptions = movingOptions;
+        }
+    }
+
+
     public class System
     {
         public static System Instance = GetInstance();
@@ -31,7 +76,6 @@ namespace POMCP.Website.Models
             MDP mdp = new MDP(world);
             return new System(world, mdp, d, 500, 3);
         }
-
 
         public World World { get; }
 
@@ -63,15 +107,6 @@ namespace POMCP.Website.Models
             TreeDepth = treeDepth;
         }
 
-        public void AdvanceSystem(int n)
-        {
-            for (int i = 0; i < n; i++)
-            {
-                AdvanceSystem(null, null);
-            }
-        }
-
-
         private ActionNode GetBestAction()
         {
             if (LastNode == null)
@@ -92,14 +127,13 @@ namespace POMCP.Website.Models
             ActionNode actionNode = GetBestAction();
             LastAction = actionNode.Action;
 
-            
+
             if (dx != null && dy != null && World.Map.IsCellFree((int) (TrueState.X + dx), (int) (TrueState.Y + dy)))
             {
-                
                 TrueState = _model.GetActionResult(
                     new State((int) (TrueState.X + dx), (int) (TrueState.Y + dy), TrueState.CamerasOrientations),
                     LastAction
-                    );
+                );
             }
             else
             {
@@ -135,7 +169,7 @@ namespace POMCP.Website.Models
             string[][] cellArray = World.Map.GetCellsArray();
             return AddWalls(cellArray);
         }
-        
+
 
         /// <summary>
         /// Add walls to the cell array representing the map. The wall do not technically exist in the model
@@ -145,13 +179,13 @@ namespace POMCP.Website.Models
         /// <returns></returns>
         public string[][] AddWalls(string[][] cellArray)
         {
-            string[][] result = new string[cellArray.Length+2][];
+            string[][] result = new string[cellArray.Length + 2][];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = new string[cellArray[0].Length+2];
+                result[i] = new string[cellArray[0].Length + 2];
                 for (int j = 0; j < result[i].Length; j++)
                 {
-                    if (i ==0 || j==0 || i == result.Length-1 || j == result[i].Length-1)
+                    if (i == 0 || j == 0 || i == result.Length - 1 || j == result[i].Length - 1)
                         result[i][j] = Wall.CellTypeString;
                     else
                     {
@@ -159,11 +193,11 @@ namespace POMCP.Website.Models
                     }
                 }
             }
+
             return result;
         }
 
-        
-        
+
         /// <summary>
         /// Return the grid describing the current distribution of the system
         /// (the probabilities of the target for every cell)
@@ -172,20 +206,21 @@ namespace POMCP.Website.Models
         public double[][] GetProbaGrid()
         {
             // Size is map size +2 to account for the walls
-            double[][] cellArray = new double[World.Map.Dx+2][];
+            double[][] cellArray = new double[World.Map.Dx + 2][];
             for (int i = 0; i < cellArray.Length; i++)
             {
-                cellArray[i] = new double[World.Map.Dy+2];
+                cellArray[i] = new double[World.Map.Dy + 2];
             }
+
             foreach (KeyValuePair<State, double> keyValuePair in CurrentDistribution.Prob)
             {
                 State key = keyValuePair.Key;
-                cellArray[key.X+1][key.Y+1] = keyValuePair.Value;
+                cellArray[key.X + 1][key.Y + 1] = keyValuePair.Value;
             }
 
             return cellArray;
         }
-        
+
 
         /// <summary>
         /// Return the view of the camera: 0 is invisible to the camera, 1 is potentially visible, 2 is observed
@@ -193,12 +228,12 @@ namespace POMCP.Website.Models
         /// <returns></returns>
         public int[][] GetCameraViewGrid()
         {
-            int[][] cellArray = new int[World.Map.Dx+2][];
+            int[][] cellArray = new int[World.Map.Dx + 2][];
             for (int i = 0; i < cellArray.Length; i++)
             {
-                cellArray[i] = new int[World.Map.Dy+2];
+                cellArray[i] = new int[World.Map.Dy + 2];
             }
-            
+
             foreach (Camera camera in World.Cameras)
             {
                 for (int i = 0; i < camera.VisibleCells.GetLength(0); i++)
@@ -206,7 +241,7 @@ namespace POMCP.Website.Models
                     for (int j = 0; j < camera.VisibleCells.GetLength(1); j++)
                     {
                         if (camera.VisibleCells[i, j])
-                            cellArray[i+1][j+1] = 1;
+                            cellArray[i + 1][j + 1] = 1;
                     }
                 }
             }
@@ -220,11 +255,12 @@ namespace POMCP.Website.Models
                     {
                         if (vision[i, j])
                         {
-                            cellArray[i+1][j+1] = 2;
+                            cellArray[i + 1][j + 1] = 2;
                         }
                     }
                 }
             }
+
             return cellArray;
         }
 
@@ -238,7 +274,7 @@ namespace POMCP.Website.Models
             List<CameraProperties> result = new List<CameraProperties>();
             foreach (Camera camera in World.Cameras)
             {
-                result.Add(new CameraProperties(camera.X+1, camera.Y+1
+                result.Add(new CameraProperties(camera.X + 1, camera.Y + 1
                     , TrueState.CamerasOrientations[camera.Num], camera.FOV));
             }
 
@@ -261,18 +297,73 @@ namespace POMCP.Website.Models
                     result[i][j] = World.Map.IsCellFree(TrueState.X + i - 1, TrueState.Y + j - 1);
                 }
             }
+
             return result;
         }
 
+
         /// <summary>
-        /// Return true if the
+        /// Return the System view object that represents the current state of the system formatted for view
         /// </summary>
-        /// <param name="dx"></param>
-        /// <param name="dy"></param>
         /// <returns></returns>
-        public bool IsMoveAllowed(int dx, int dy)
+        public SystemView GetSystemView()
         {
-            return World.Map.IsCellFree(TrueState.X + dx, TrueState.Y + dy);
+            return new SystemView(
+                GetMapArray(),
+                new[] {TrueState.X + 1, TrueState.Y + 1},
+                GetCameras(),
+                GetProbaGrid(),
+                GetCameraViewGrid(),
+                GetMoveOptions());
+        }
+
+
+        /// <summary>
+        /// Updates the system at a certain position, the update depend on the keyword passed with the position
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="cellType"></param>
+        public void ModifyCell(int x, int y, string cellType)
+        {
+            if (!(World.Map.IsInMap(x, y)))
+                return;
+            
+            switch (cellType)
+            {
+                case ("wall"):
+                    if (!(TrueState.X == x && TrueState.Y == y))
+                        World.Map.AddObstacle(new Wall(x, y));
+                    break;
+                case ("glass"):
+                    if (!(TrueState.X == x && TrueState.Y == y))
+                        World.Map.AddObstacle(new Glass(x, y));
+                    break;
+                case "target":
+                    if (World.Map.IsCellFree(x, y))
+                    {
+                        TrueState.X = x;
+                        TrueState.Y = y;
+                    }
+                    break;
+                case "camera":
+                    //TODO possibility to remove existing camera (remove camera num property)
+                        
+                    if (!World.IsCamera(x,y) && World.Map.IsCellFree(x, y))
+                    {
+                        World.AddCamera(new AngularCamera(x, y, World.Cameras.Count));
+                        TrueState.CamerasOrientations.Add(0f);
+                    }
+                    break;
+                default:
+                    World.Map.Cells[x,y] = null;
+                    break;
+            }
+            
+            World.InitializeCameras();
+            Distribution<State> d = new Distribution<State>();
+            d.SetProba(TrueState, 1);
+            CurrentDistribution = d;
         }
     }
 }

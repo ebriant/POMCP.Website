@@ -32,7 +32,7 @@ namespace POMCP.Website.Models
 
             Camera camera = new AngularCamera(7,7, world.Cameras.Count);
             world.AddCamera(camera);
-            world.InitializeCamera();
+            world.InitializeCameras();
                 
                 
             return world;

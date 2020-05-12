@@ -12,17 +12,35 @@ export class GridComponent implements OnInit {
   @Input() map: string[][];
   @Input() camerasList: Camera[] = [];
   @Input() trueState: number[];
-  @Input() probabilities: number[];
+  @Input() probabilities: number[][];
   @Input() cameraVision: number[][];
 
   @Output() cellChanged = new EventEmitter<number[]>();
 
-  CameraVector: number[][] = [];
+  isClicking = false;
 
   constructor() {
   }
 
   ngOnInit(): void {
+  }
+
+  cellClick(x,y) {
+    this.cellChanged.emit([x,y]);
+    this.isClicking = true;
+  }
+
+  cellOver(x, y){
+    if (this.isClicking) {
+      this.cellChanged.emit([x,y]);
+    }
+  }
+
+  test(text) {
+    if (onmousedown) {
+      console.log("aa");
+    }
+    console.log(text);
   }
 
   abscissaArray(): number[] {

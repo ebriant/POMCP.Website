@@ -1,4 +1,5 @@
 ﻿﻿using System.Collections.Generic;
+ using System.Runtime.Intrinsics.X86;
  using POMCP.Website.Models.Cameras;
  using POMCP.Website.Models.Environment.Cells;
 
@@ -24,11 +25,22 @@
             Cameras.Add(c);
         }
         
-        public void InitializeCamera() {
+        public void InitializeCameras() {
             CameraVision vision = new CameraVisionCenter(Map);
             foreach (Camera c in Cameras) {
                 c.Initialize(vision);
             }
+        }
+
+        public bool IsCamera(int x, int y)
+        {
+            foreach (Camera camera in Cameras)
+            {
+                if (camera.X == x && camera.Y == y)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

@@ -61,20 +61,32 @@
 </div>
 
 <div id="legend">
-  <div class="color-box cell" (click)="changeType='empty'"></div>
-  Empty space
+  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('')">
 
-  <div class="color-box cell wall" (click)="changeType='wall'"></div>
-  Wall
+    <div class="color-box cell"></div>
+    Empty space
+  </div>
 
-  <div class="color-box cell glass" (click)="changeType='glass'"></div>
-  Glass
+  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('wall')">
+    <div class="color-box cell wall"></div>
+    Wall
+  </div>
 
-  <div class="color-box cell target"></div>
-  Target
+    <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('glass')">
+      <div class="color-box cell glass"></div>
+      Glass
+    </div>
 
-  <div class="color-box cell camera"></div>
-  Camera
+
+  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('target')">
+    <div class="color-box cell target"></div>
+    Target
+  </div>
+
+  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('camera')">
+    <div class="color-box cell camera"></div>
+    Camera
+  </div>
 
 </div>
 
@@ -82,7 +94,7 @@
   <div class="row">
     <div class="col-sm">
       <div class="grid-title">True state of the system</div>
-      <app-grid [map]="map" [trueState]="trueState" (cellChanged)="changeCell($event)"></app-grid>
+      <app-grid [map]="map" [trueState]="trueState" [camerasList]="cameras" (cellChanged)="changeCell($event)"></app-grid>
     </div>
 
     <div class="col-sm">

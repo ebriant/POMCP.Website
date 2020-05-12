@@ -17,9 +17,9 @@ namespace POMCP.Website.Controllers
     public class WorldController : Controller
     {
         
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<WorldController> _logger;
 
-        public WorldController(ILogger<WeatherForecastController> logger)
+        public WorldController(ILogger<WorldController> logger)
         {
             _logger = logger;
         }

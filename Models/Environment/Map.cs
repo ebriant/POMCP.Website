@@ -40,10 +40,11 @@ using System.Threading.Tasks.Dataflow;
 		}
 		
 		public void AddObstacle(Obstacle obstacle) {
-			Cells[obstacle.X,obstacle.Y] = obstacle;
+			if (IsInMap(obstacle.X,obstacle.Y))
+				Cells[obstacle.X,obstacle.Y] = obstacle;
 		}
-
-
+		
+		
 		public Cell GetCell(int x, int y)
 		{
 			return Cells[x, y];
@@ -68,7 +69,7 @@ using System.Threading.Tasks.Dataflow;
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		private bool IsInMap(int x, int y) {
+		public bool IsInMap(int x, int y) {
 			return x >= 0 && x < Dx && y >= 0 && y < Dy;
 		}
 

@@ -7,72 +7,20 @@ namespace POMCP.Website.Models.Pomcp
     public class State
     {
         
-        public int X { get; }
+        public int X { get; set; }
 
-        public int Y { get; }
+        public int Y { get; set; }
 
         public List<double> CamerasOrientations { get; }
 
-        /**
-	 * l'ensemble des etats
-	 */
-        private static List<State> allS;
 
-        /**
-	 * l'ensemble des etats accessibles (i.e. non bloqués par un mur)
-	 */
-        private static List<State> allSf;
-
-        
         public State(int x, int y, List<Double> camerasOrientations)
         {
             X = x;
             Y = y;
             CamerasOrientations = camerasOrientations;
         }
-
         
-        /**
-	 * retourne tous les etats patron singleton.
-	 */
-        public static List<State> GetAll(State state, World world)
-        {
-            if (allS == null)
-            {
-                allS = new List<State>();
-                for (int x = 0; x < world.Map.Dx; x++)
-                {
-                    for (int y = 0; y < world.Map.Dy; y++)
-                    {
-                        allS.Add(new State(x, y, state.CamerasOrientations));
-                    }
-                }
-            }
-            return allS;
-        }
-
-        public static List<State> GetAllFree(Map map)
-        {
-            allSf = new List<State>();
-            for (int x = 0; x < map.Dx; x++)
-            {
-                for (int y = 0; y < map.Dy; y++)
-                {
-                    if (map.IsCellFree(x, y))
-                        allSf.Add(new State(x, y, null));
-                }
-            }
-
-            return allSf;
-        }
-
-        public int[] GetCoord()
-        {
-            int[] coord = {X, Y};
-            return coord;
-        }
-
-
         public override int GetHashCode()
         {
             const int prime = 31;
