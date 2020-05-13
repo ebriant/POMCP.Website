@@ -11,18 +11,12 @@ namespace POMCP.Website.Models.Cameras
 	    public double FOV { get; } = Math.PI / 8;
 
 	    public bool[,] VisibleCells;
-
-
-	    /// <summary>
-		 /// Number of the Camera in the world
-		 /// </summary>
-        public int Num { get; }
 	    
 	    
-        public Camera(int x, int y, int number) : base(x,y)
+	    
+        public Camera(int x, int y) : base(x,y)
         {
 	        CellType = "camera";
-            Num = number;
         }
 
         public void Initialize(CameraVision vision)
@@ -40,16 +34,25 @@ namespace POMCP.Website.Models.Cameras
         /// <returns></returns>
          public abstract Distribution<Observation> GetObservation(State state);
         
-        public abstract List<double> GetActions(double angle);
+        public abstract List<double> GetActions();
 	
         public virtual double GetValue(State state) 
         {
-            return GetVision(state.CamerasOrientations[Num])[state.X,state.Y] ? 1 : 0;
+            return GetVision(state.CamerasOrientations[this])[state.X,state.Y] ? 1 : 0;
         }
 
         public override string ToString()
         {
 	        return ("Camera " +X+", "+Y);
         }
+        
+        public override int GetHashCode()
+        {
+	        const int prime = 43;
+	        int result = 1;
+	        result = prime * result + X + prime ^ 2 * Y;
+	        return result;
+        }
+        
     }
 }

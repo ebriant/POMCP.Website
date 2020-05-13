@@ -6,13 +6,13 @@ using POMCP.Website.Models.Environment;
 namespace POMCP.Website.Models.Pomcp
 {
     /// <summary>
-    /// Class representing the Markov Decision Process
+    /// Class representing the Markov Model that dictates how the system changes at every time step
     /// </summary>
-    public class MDP
+    public class MarkovModel
     {
         public World World { get; }
 
-        public MDP(World world)
+        public MarkovModel(World world)
         {
             World = world;
         }
@@ -33,35 +33,48 @@ namespace POMCP.Website.Models.Pomcp
 
         public List<Action> GetAllActions(State state)
         {
-            List<Action> actionsList = null;
-            for (int i = 0; i < World.Cameras.Count; i++)
+            List<Action> actionsList = new List<Action>();
+            actionsList.Add(new Action());
+            
+            foreach (Camera camera in World.Cameras)
             {
-                Camera camera = World.Cameras[i];
-                if (actionsList == null)
+                List<Action> newActionsList = new List<Action>();
+                foreach (Action a in actionsList)
                 {
-                    actionsList = new List<Action>();
-                    foreach (double o in camera.GetActions(state.CamerasOrientations[i]))
+                    foreach (double o in camera.GetActions())
                     {
-                        actionsList.Add(new Action(o, World.Cameras.Count));
-                    }
-                }
-                else
-                {
-                    List<Action> L2 = new List<Action>();
+                        a.OrientationsChanges[camera] = o;
 
-                    foreach (Action a in actionsList)
-                    {
-                        foreach (double o in camera.GetActions(state.CamerasOrientations[i]))
-                        {
-                            List<double> orient = a.Orientations;
-                            orient[camera.Num] = o;
-
-                            L2.Add(new Action(orient));
-                        }
+                        newActionsList.Add(new Action(a.OrientationsChanges));
                     }
 
-                    actionsList = L2;
+                    actionsList = newActionsList;
                 }
+                // if (actionsList.Count == 0)
+                // {
+                //     actionsList = new List<Action>();
+                //     foreach (double orientationChange in camera.GetActions())
+                //     {
+                //         actionsList.Add(new Action(orientationChange, camera));
+                //     }
+                // }
+                // else
+                // {
+                //     List<Action> newActionsList = new List<Action>();
+                //
+                //     foreach (Action a in actionsList)
+                //     {
+                //         foreach (double o in camera.GetActions())
+                //         {
+                //             Dictionary<Camera, double> orient = a.OrientationsChanges;
+                //             orient[camera] = o;
+                //
+                //             newActionsList.Add(new Action(orient));
+                //         }
+                //     }
+                //
+                //     actionsList = newActionsList;
+                // }
             }
 
             return actionsList;
@@ -111,45 +124,73 @@ namespace POMCP.Website.Models.Pomcp
             return observationDistribution;
         }
 
+        /// <summary>
+        /// Return the value of a state. The value is used in 
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public double GetStateValue(State s)
         {
-            double v = 0;
-            foreach (Camera c in World.Cameras)
+            double value = 0;
+            foreach (Camera camera in World.Cameras)
             {
-                v += c.GetValue(s);
+                value += camera.GetValue(s);
             }
-            return v; //Math.min(1, v);
+            return value;
         }
 
+        /// <summary>
+        /// Return the state that is the result of the given action on the given state
+        /// </summary>
+        /// <param name="state">given state</param>
+        /// <param name="action">given action</param>
+        /// <returns></returns>
         public State GetActionResult(State state, Action action)
         {
-            List<double> L = new List<double>();
-            for (int i = 0; i < state.CamerasOrientations.Count; i++)
-                L.Add(state.CamerasOrientations[i] + action.Orientations[i]);
-            return new State(state.X, state.Y, L);
+            Dictionary<Camera, double> orientations = new Dictionary<Camera, double> ();
+            foreach (KeyValuePair<Camera,double> keyValuePair in state.CamerasOrientations)
+            {
+                orientations[keyValuePair.Key] = keyValuePair.Value + action.OrientationsChanges[keyValuePair.Key];
+            }
+            return new State(state.X, state.Y, orientations);
         }
 
 
-        public Distribution<State> UpdateTransition(State s, Action a)
+        /// <summary>
+        /// Apply an action and the Markov transition to a state, return the resulting distribution
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public Distribution<State> ApplyTransition(State s, Action action)
         {
             Distribution<State> d = new Distribution<State>();
             d.SetProba(s, 1);
-            return UpdateTransition(d, a);
+            return ApplyTransition(d, action);
         }
 
-        public Distribution<State> UpdateTransition(Distribution<State> d, Action a)
+        /// <summary>
+        /// Apply an action to a distribution and returns the result distribution.
+        /// This method first apply the action to the states of the distribution.
+        /// Then, it apply the normal state transition, the evolution of the system independent from the action
+        /// (i.e here the movement of the target)
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public Distribution<State> ApplyTransition(Distribution<State> d, Action action)
         {
+            // Create a new distribution that contains the states after applying the action
             Distribution<State> d1 = new Distribution<State>();
             foreach (State s in d.GetKeys()) {
                 if (d.GetProba(s) > 0)
-                    d1.SetProba(GetActionResult(s, a), d.GetProba(s));
+                    d1.SetProba(GetActionResult(s, action), d.GetProba(s));
             }
+            
+            // New distribution that contains the states after the transition (i.e after movement of the target)
             Distribution<State> dnew = new Distribution<State>();
-
-            Distribution<State> transition;
-
             foreach (State s1 in d1.GetKeys()) {
-                transition = World.Target.GetTransition(s1, this.GetAllState(s1));
+                Distribution<State> transition = World.Target.GetTransition(s1, this.GetAllState(s1));
 
                 foreach (State s2 in transition.GetKeys()){
                     dnew.SetProba(s2, dnew.GetProba(s2) + d1.GetProba(s1) * transition.GetProba(s2));
@@ -161,12 +202,12 @@ namespace POMCP.Website.Models.Pomcp
         
         //
         /// <summary>
-        /// Update a belief given an observation
+        /// Update a distribution of state probability given an observation
         /// </summary>
         /// <param name="d"></param>
         /// <param name="o"></param>
         /// <returns></returns>
-        public Distribution<State> UpdateObservation(Distribution<State> d, Distribution<Observation> o)
+        public Distribution<State> ApplyObservation(Distribution<State> d, Distribution<Observation> o)
         {
             Distribution<State> dnew = new Distribution<State>();
 
@@ -175,7 +216,7 @@ namespace POMCP.Website.Models.Pomcp
                 foreach (State s in d.GetKeys()) {
                     bool visible = false;
                     foreach (Camera c in World.Cameras) {
-                        if (c.GetVision(s.CamerasOrientations[c.Num])[s.X,s.Y])
+                        if (c.GetVision(s.CamerasOrientations[c])[s.X,s.Y])
                             visible = true;
                     }
                     if (!visible && Math.Abs(d.GetProba(s)) > 0.001f)
@@ -192,7 +233,6 @@ namespace POMCP.Website.Models.Pomcp
                         dnew.SetProba(s, p);
                 }
             }
-
             dnew.Normalise();
             return dnew;
         }

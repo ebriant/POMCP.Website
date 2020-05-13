@@ -9,7 +9,7 @@ namespace POMCP.Website.Models.Cameras
     {
         
 
-        public AngularCamera(int x, int y, int number) : base(x, y, number)
+        public AngularCamera(int x, int y) : base(x, y)
         {
         }
 
@@ -63,7 +63,7 @@ namespace POMCP.Website.Models.Cameras
         public override Distribution<Observation> GetObservation(State s)
         {
             Distribution<Observation> o = new Distribution<Observation>();
-            if (GetVision(s.CamerasOrientations[Num])[s.X, s.Y])
+            if (GetVision(s.CamerasOrientations[this])[s.X, s.Y])
                 o.SetProba(new Observation(true, s.X, s.Y), 1);
             else
                 o.SetProba(new Observation(false), 1);
@@ -71,12 +71,11 @@ namespace POMCP.Website.Models.Cameras
         }
 
 
-        public override List<double> GetActions(double angle)
+        public override List<double> GetActions()
         {
-            int p = (int) Math.Round(angle / Math.PI);
 
             List<double> actions = new List<double>();
-            for (int i = p - 2; i < p + 3; i++)
+            for (int i = - 1; i < 2; i++)
             {
                 actions.Add(Math.PI * i / 4);
             }
@@ -84,16 +83,16 @@ namespace POMCP.Website.Models.Cameras
             return actions;
         }
 
-        public override double GetValue(State state)
-        {
-            bool[,] vision = GetVision(state.CamerasOrientations[Num]);
-            double count = 0;
-            foreach (bool b in vision)
-            {
-                if (b) count += 1;
-            }
-
-            return vision[state.X, state.Y] ? 1 : 0 + count / (vision.GetLength(0) * vision.GetLength(1));
-        }
+        // public override double GetValue(State state)
+        // {
+        //     bool[,] vision = GetVision(state.CamerasOrientations[this]);
+        //     double count = 0;
+        //     foreach (bool b in vision)
+        //     {
+        //         if (b) count += 1;
+        //     }
+        //
+        //     return vision[state.X, state.Y] ? 1 : 0 + count / (vision.GetLength(0) * vision.GetLength(1));
+        // }
     }
 }

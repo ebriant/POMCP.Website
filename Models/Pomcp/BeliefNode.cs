@@ -31,7 +31,7 @@ namespace POMCP.Website.Models.Pomcp
         public ActionNode Parent { get; private set; }
 
 
-        public MDP Mdp;
+        public MarkovModel MarkovModel;
         
         /// <summary>
         /// Build a new belief node with a given starting distribution
@@ -39,11 +39,11 @@ namespace POMCP.Website.Models.Pomcp
         /// <param name="d">Starting distribution</param>
         /// <param name="o">Observation that characterize the node</param>
         /// <param name="n">Parent of the node</param>
-        public BeliefNode(Distribution<State> d, Observation o, ActionNode n, MDP mdp) : base()
+        public BeliefNode(Distribution<State> d, Observation o, ActionNode n, MarkovModel markovModel) : base()
         {
             Observation = o;
             Parent = n;
-            Mdp = mdp;
+            MarkovModel = markovModel;
             Belief = d;
             Children = new List<ActionNode>();
         }
@@ -53,11 +53,11 @@ namespace POMCP.Website.Models.Pomcp
         /// </summary>
         /// <param name="observation">Observation that characterize the node</param>
         /// <param name="parentNode">Parent of the node</param>
-        public BeliefNode(Observation observation, ActionNode parentNode, MDP mdp)
+        public BeliefNode(Observation observation, ActionNode parentNode, MarkovModel markovModel)
         {
             Observation = observation;
             Parent = parentNode;
-            Mdp = mdp;
+            MarkovModel = markovModel;
             Belief = new Distribution<State>();
             Children = new List<ActionNode>();
         }
@@ -128,7 +128,7 @@ namespace POMCP.Website.Models.Pomcp
         /// <returns></returns>
         public Action DrawAction(State state, bool stocking, float C)
         {
-            List<Action> allActions = Mdp.GetAllActions(state);
+            List<Action> allActions = MarkovModel.GetAllActions(state);
             if (stocking)
             {
                 Distribution<Action> d = new Distribution<Action>();
@@ -163,7 +163,7 @@ namespace POMCP.Website.Models.Pomcp
             Distribution<State> prob = Belief.GetNormalisedCopy();
             foreach (State state in Belief.GetKeys())
             {
-                Value += Mdp.GetStateValue(state) * prob.GetProba(state);
+                Value += MarkovModel.GetStateValue(state) * prob.GetProba(state);
             }
 
             foreach (ActionNode n in Children)

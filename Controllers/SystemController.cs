@@ -6,10 +6,6 @@ using POMCP.Website.Models;
 
 namespace POMCP.Website.Controllers
 {
-
-    
-    
-    
     [ApiController]
     [Route("[controller]")]
     public class PomcpController : Controller

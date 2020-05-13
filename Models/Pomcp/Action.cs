@@ -1,33 +1,47 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using POMCP.Website.Models.Cameras;
 
 namespace POMCP.Website.Models.Pomcp
 {
     public class Action
     {
-        public List<double> Orientations { get; }
+        /// <summary>
+        /// List all the orientation changes desired for the action
+        /// </summary>
+        public Dictionary<Camera, double>  OrientationsChanges { get; }
 
-        public Action(List<double> orientations)
+        
+        public Action()
         {
-            Orientations = orientations;
+            OrientationsChanges = new Dictionary<Camera, double>();
+        }
+        
+        public Action(Dictionary<Camera, double>  orientationsChanges)
+        {
+            OrientationsChanges = new Dictionary<Camera, double>();
+            foreach (KeyValuePair<Camera,double> kv in orientationsChanges)
+            {
+                OrientationsChanges[kv.Key] = kv.Value;
+            }
         }
 
-        public Action(double orientation, int nbCam)
+        public Action(double orientation, Camera cam)
         {
-            Orientations = new List<double>();
-            Orientations.Add(orientation);
-            for (int i = 0; i < nbCam - 1; i++)
-            {
-                Orientations.Add(0d);
-            }
+            OrientationsChanges = new Dictionary<Camera, double> ();
+            OrientationsChanges[cam] = orientation;
+            // for (int i = 0; i < nbCam - 1; i++)
+            // {
+            //     Orientations.Add(0d);
+            // }
         }
 
         public override string ToString()
         {
             string s = "Action ";
-            foreach (double d in this.Orientations)
-                s = s + ", " + d * 180 / Math.PI;
+            foreach (double d in OrientationsChanges.Values)
+                s += ", " + d * 180 / Math.PI;
             return s;
         }
 
@@ -36,9 +50,11 @@ namespace POMCP.Website.Models.Pomcp
         {
             int prime = 31;
             int result = 1;
-            for (int i = 0; i < Orientations.Count; i++)
+            int i = 0;
+            foreach (double orientationsValue in OrientationsChanges.Values)
             {
-                result += (prime ^ i) * (int) Orientations[i];
+                result += (prime ^ i) * (int) orientationsValue;
+                i++;
             }
             return result;
         }
@@ -53,13 +69,18 @@ namespace POMCP.Website.Models.Pomcp
             if (!(obj is Action))
                 return false;
             Action other = (Action) obj;
-
-            for (int i = 0; i <Orientations.Count; i++)
+            if (OrientationsChanges.Count != other.OrientationsChanges.Count)
+                return false;
+            foreach (KeyValuePair<Camera,double> keyValuePair in OrientationsChanges)
             {
-                if (Math.Abs(Orientations[i] - other.Orientations[i]) > 0.01)
+                double value;
+                if (!other.OrientationsChanges.TryGetValue(keyValuePair.Key, out value))
                     return false;
+                else if (Math.Abs(value - keyValuePair.Value) > 0.001f)
+                {
+                    return false;
+                }
             }
-
             return true; 
         }
     }

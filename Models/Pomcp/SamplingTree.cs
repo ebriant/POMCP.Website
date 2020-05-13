@@ -12,10 +12,10 @@ namespace POMCP.Website.Models.Pomcp
         /// <summary>
         /// Markov model used
         /// </summary>
-        private MDP mdp;
+        private MarkovModel _markovModel;
 
+        
         public const float gama = 0.3f;
-
         
         // exploration parameter of the UCB searching,
         private const float C = 1.4f;
@@ -27,12 +27,12 @@ namespace POMCP.Website.Models.Pomcp
         /// <param name="d">Actual distribution of states of the system</param>
         /// <param name="sampleNumber">number of samples in the tree</param>
         /// <param name="maxDepth">maximum depth for each branch</param>
-        /// <param name="mdp">model</param>
-        public SamplingTree(Distribution<State> d, int sampleNumber, int maxDepth, MDP mdp)
+        /// <param name="markovModel">model</param>
+        public SamplingTree(Distribution<State> d, int sampleNumber, int maxDepth, MarkovModel markovModel)
         {
             // The root is the given distribution
-            this.mdp = mdp;
-            Root = new BeliefNode(d, null, null, mdp);
+            _markovModel = markovModel;
+            Root = new BeliefNode(d, null, null, markovModel);
             for (int i = 0; i < sampleNumber; i++)
             {
                 GrowTree(maxDepth);
@@ -45,12 +45,12 @@ namespace POMCP.Website.Models.Pomcp
         /// <param name="n"></param>
         /// <param name="sampleNumber"></param>
         /// <param name="maxDepth"></param>
-        /// <param name="mdp"></param>
-        public SamplingTree(BeliefNode n, int sampleNumber, int maxDepth, MDP mdp)
+        /// <param name="markovModel"></param>
+        public SamplingTree(BeliefNode n, int sampleNumber, int maxDepth, MarkovModel markovModel)
         {
             // The root is an existing beliefNode, useful to conserve the previous explorations
             Root = n;
-            this.mdp = mdp;
+            this._markovModel = markovModel;
             for (int i = 0; i < sampleNumber; i++)
             {
                 GrowTree(maxDepth);
@@ -98,16 +98,16 @@ namespace POMCP.Website.Models.Pomcp
                 }
 
                 // Get a new state of the system			
-                state = mdp.UpdateTransition(state, action).Draw();
+                state = _markovModel.ApplyTransition(state, action).Draw();
 
-                Observation observation = mdp.GetAllObservations(state).Draw();
+                Observation observation = _markovModel.GetAllObservations(state).Draw();
 
                 // If the new node is not in the children, it is added, else its occurrence is incremented
 
                 beliefNode = actionNode.SearchChildren(observation);
                 if (beliefNode == null)
                 {
-                    beliefNode = new BeliefNode(observation, actionNode, mdp);
+                    beliefNode = new BeliefNode(observation, actionNode, _markovModel);
                     if (stocking)
                         actionNode.AddChild(beliefNode);
                     stocking = false;

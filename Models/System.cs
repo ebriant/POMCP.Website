@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Dynamic;
-using Microsoft.AspNetCore.Authentication;
-using POMCP.Website.Controllers;
 using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
 using POMCP.Website.Models.Environment.Cells;
@@ -33,7 +29,7 @@ namespace POMCP.Website.Models
             return "Camera. X:" + X + ", Y: " + Y + ", Ori: " + Orientation + ", FOV: " + Fov;
         }
     }
-
+    
     public struct SystemView
     {
         public string[][] Map { get; }
@@ -59,49 +55,43 @@ namespace POMCP.Website.Models
     public class System
     {
         public static System Instance = GetInstance();
-
         private static System GetInstance()
         {
             World world = WorldBuilder.DefaultWorld;
             Distribution<State> d = new Distribution<State>();
-            List<double> camerasOrientations = new List<double>();
-
+            Dictionary<Camera, double> camerasOrientations = new Dictionary<Camera, double>();
+            
             foreach (Camera camera in world.Cameras)
             {
-                camerasOrientations.Add(-Math.PI / 2);
+                camerasOrientations[camera] = -Math.PI / 2;
             }
 
-            d.SetProba(new State(6, 1, camerasOrientations), 0.5);
-            d.SetProba(new State(6, 2, camerasOrientations), 0.5);
-            MDP mdp = new MDP(world);
-            return new System(world, mdp, d, 500, 3);
+            d.SetProba(new State(6, 1, camerasOrientations), 1);
+            MarkovModel markovModel = new MarkovModel(world);
+            System s = new System(world, markovModel, d, 500, 3);
+            s.AdvanceSystem(-1,-1);
+            return s;
         }
 
         public World World { get; }
 
-        private MDP _model;
+        private MarkovModel _model;
 
         private Distribution<State> CurrentDistribution { get; set; }
-
-        public Observation LastObservation { get; }
 
         private Action LastAction { get; set; }
 
         public State TrueState { get; set; }
-
-        private BeliefNode LastNode { get; } = null;
-
-        SamplingTree _tree;
-
+        
         private int TreeSamplesCount { get; }
 
         private int TreeDepth { get; }
 
-        private System(World world, MDP mdp, Distribution<State> initial, int treeSamplesCount, int treeDepth)
+        private System(World world, MarkovModel markovModel, Distribution<State> initial, int treeSamplesCount, int treeDepth)
         {
             CurrentDistribution = initial;
             TrueState = CurrentDistribution.Draw();
-            _model = mdp;
+            _model = markovModel;
             World = world;
             TreeSamplesCount = treeSamplesCount;
             TreeDepth = treeDepth;
@@ -109,17 +99,8 @@ namespace POMCP.Website.Models
 
         private ActionNode GetBestAction()
         {
-            if (LastNode == null)
-            {
-                _tree = new SamplingTree(CurrentDistribution, TreeSamplesCount, TreeDepth, _model);
-            }
-            else
-            {
-                LastNode.SetAsRoot(CurrentDistribution);
-                _tree = new SamplingTree(LastNode, TreeSamplesCount, TreeDepth, _model);
-            }
-
-            return _tree.GetBestAction();
+            SamplingTree tree = new SamplingTree(CurrentDistribution, TreeSamplesCount, TreeDepth, _model);
+            return tree.GetBestAction();
         }
 
         public void AdvanceSystem(int? dx, int? dy)
@@ -137,26 +118,26 @@ namespace POMCP.Website.Models
             }
             else
             {
-                TrueState = _model.UpdateTransition(TrueState, LastAction).Draw();
+                TrueState = _model.ApplyTransition(TrueState, LastAction).Draw();
             }
 
 
-            Distribution<Observation> observationDistribution = new Distribution<Observation>();
+            Distribution<Observation> observation = new Distribution<Observation>();
             foreach (Camera c in World.Cameras)
             {
-                if (observationDistribution.Prob.Count == 0)
+                if (observation.Prob.Count == 0)
                 {
-                    observationDistribution = c.GetObservation(TrueState);
+                    observation = c.GetObservation(TrueState);
                 }
                 else
                 {
-                    observationDistribution =
-                        _model.CrossDistributions(observationDistribution, c.GetObservation(TrueState));
+                    observation =
+                        _model.CrossDistributions(observation, c.GetObservation(TrueState));
                 }
             }
 
-            CurrentDistribution = _model.UpdateTransition(CurrentDistribution, LastAction);
-            CurrentDistribution = _model.UpdateObservation(CurrentDistribution, observationDistribution);
+            CurrentDistribution = _model.ApplyTransition(CurrentDistribution, LastAction);
+            CurrentDistribution = _model.ApplyObservation(CurrentDistribution, observation);
         }
 
 
@@ -248,7 +229,7 @@ namespace POMCP.Website.Models
 
             foreach (Camera camera in World.Cameras)
             {
-                bool[,] vision = camera.GetVision(TrueState.CamerasOrientations[camera.Num]);
+                bool[,] vision = camera.GetVision(TrueState.CamerasOrientations[camera]);
                 for (int i = 0; i < camera.VisibleCells.GetLength(0); i++)
                 {
                     for (int j = 0; j < camera.VisibleCells.GetLength(1); j++)
@@ -272,10 +253,11 @@ namespace POMCP.Website.Models
         public CameraProperties[] GetCameras()
         {
             List<CameraProperties> result = new List<CameraProperties>();
+            
             foreach (Camera camera in World.Cameras)
             {
                 result.Add(new CameraProperties(camera.X + 1, camera.Y + 1
-                    , TrueState.CamerasOrientations[camera.Num], camera.FOV));
+                    , TrueState.CamerasOrientations[camera], camera.FOV));
             }
 
             return result.ToArray();
@@ -347,19 +329,25 @@ namespace POMCP.Website.Models
                     }
                     break;
                 case "camera":
-                    //TODO possibility to remove existing camera (remove camera num property)
-                        
-                    if (!World.IsCamera(x,y) && World.Map.IsCellFree(x, y))
+                    
+                    Camera camera = World.IsCamera(x, y);
+                    if (camera != null)
                     {
-                        World.AddCamera(new AngularCamera(x, y, World.Cameras.Count));
-                        TrueState.CamerasOrientations.Add(0f);
+                        World.Cameras.Remove(camera);
+                        TrueState.CamerasOrientations.Remove(camera);
+                    }
+                    if (World.IsCamera(x,y) == null && World.Map.IsCellFree(x, y))
+                    {
+                        Camera newCamera = new AngularCamera(x, y);
+                        World.AddCamera(newCamera);
+                        TrueState.CamerasOrientations[newCamera]= 0d;
                     }
                     break;
                 default:
                     World.Map.Cells[x,y] = null;
                     break;
             }
-            
+
             World.InitializeCameras();
             Distribution<State> d = new Distribution<State>();
             d.SetProba(TrueState, 1);

@@ -30,8 +30,11 @@ namespace POMCP.Website.Models
             
             World world = new World(map, target);
 
-            Camera camera = new AngularCamera(7,7, world.Cameras.Count);
+            Camera camera = new AngularCamera(7,7);
             world.AddCamera(camera);
+
+            Camera camera2 = new AngularCamera(0,7);
+            world.AddCamera(camera2);
             world.InitializeCameras();
                 
                 
