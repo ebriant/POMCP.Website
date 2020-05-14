@@ -2,12 +2,23 @@
 
 <button type="button" class="btn" (click)="gettingStartedComponent.pageCounter=0">Getting Started</button>
 
+<label>
+  Map Width
+  <input class="" type="number" min="{{trueState?trueState[0]+1:0}}" max="20" value="{{map?map.length:0}}"
+         [(ngModel)]="mapSizeX" (change)="setMapSize()">
+</label>
+<label>
+  Map Height
+  <input class="" type="number" min="{{trueState?trueState[1]+1:0}}" max="20" value="{{map?map[0].length:0}}"
+         [(ngModel)]="mapSizeY" (change)="setMapSize()">
+</label>
+
 <div style="padding: 10px; display: inline-block">
   <table id="control">
     <tr>
       <td>
         <button type="button" (click)="updateSystem(-1,-1)" [disabled]="isMoving || !movingOptions[0][0]">
-          <i class="fa fa-arrow-circle-o-left fa-2x fa-rotate-45"></i>
+          <i class="fa fa-arrow-circle-o-left fa-rotate-45 fa-xs"></i>
         </button>
       </td>
       <td>
@@ -61,29 +72,34 @@
 </div>
 
 <div id="legend">
-  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('')">
+  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('')"
+       [class.cell-type-selected]="cellChangeActive && cellChangeType==''">
 
     <div class="color-box cell"></div>
     Empty space
   </div>
 
-  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('wall')">
+  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('wall')"
+       [class.cell-type-selected]="cellChangeActive && cellChangeType=='wall'">
     <div class="color-box cell wall"></div>
     Wall
   </div>
 
-    <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('glass')">
+    <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('glass')"
+         [class.cell-type-selected]="cellChangeActive && cellChangeType=='glass'">
       <div class="color-box cell glass"></div>
       Glass
     </div>
 
 
-  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('target')">
+  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('target')"
+       [class.cell-type-selected]="cellChangeActive && cellChangeType=='target'">
     <div class="color-box cell target"></div>
     Target
   </div>
 
-  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('camera')">
+  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('camera')"
+       [class.cell-type-selected]="cellChangeActive && cellChangeType=='camera'">
     <div class="color-box cell camera"></div>
     Camera
   </div>
@@ -94,18 +110,19 @@
   <div class="row">
     <div class="col-sm">
       <div class="grid-title">True state of the system</div>
-      <app-grid [map]="map" [trueState]="trueState" [camerasList]="cameras" (cellChanged)="changeCell($event)"></app-grid>
+      <app-grid [map]="map" [trueState]="trueState" [camerasList]="cameras" (cellChanged)="changeCell($event)"
+                [cellChangeActive]="cellChangeActive"></app-grid>
     </div>
 
     <div class="col-sm">
       <div class="grid-title">Belief state of the system</div>
-      <app-grid [map]="map" [probabilities]="probabilities" (cellChanged)="changeCell($event)"></app-grid>
+      <app-grid [map]="map" [probabilities]="probabilities" (cellChanged)="changeCell($event)" [cellChangeActive]="cellChangeActive"></app-grid>
     </div>
 
     <div class="col-sm">
       <div class="grid-title">Observation of the cameras</div>
       <app-grid [map]="map" [camerasList]="cameras" [trueState]="trueState"
-                [cameraVision]="camerasVision" (cellChanged)="changeCell($event)"></app-grid>
+                [cameraVision]="camerasVision" (cellChanged)="changeCell($event)" [cellChangeActive]="cellChangeActive"></app-grid>
     </div>
   </div>
 </div>

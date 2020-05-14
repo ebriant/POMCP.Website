@@ -15,6 +15,7 @@ export class GridComponent implements OnInit {
   @Input() probabilities: number[][];
   @Input() cameraVision: number[][];
 
+  @Input() cellChangeActive: boolean;
   @Output() cellChanged = new EventEmitter<number[]>();
 
   isClicking = false;
@@ -26,6 +27,7 @@ export class GridComponent implements OnInit {
   }
 
   cellClick(x,y) {
+    console.log(this.cellChangeActive);
     this.cellChanged.emit([x,y]);
     this.isClicking = true;
   }
@@ -34,13 +36,6 @@ export class GridComponent implements OnInit {
     if (this.isClicking) {
       this.cellChanged.emit([x,y]);
     }
-  }
-
-  test(text) {
-    if (onmousedown) {
-      console.log("aa");
-    }
-    console.log(text);
   }
 
   abscissaArray(): number[] {

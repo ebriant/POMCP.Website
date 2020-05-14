@@ -22,6 +22,9 @@ export class BoardComponent implements OnInit {
   public cellChangeType;
   public cellChangeActive = false;
 
+  public mapSizeX;
+  public mapSizeY;
+
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
 
     let params = new HttpParams();
@@ -60,27 +63,57 @@ export class BoardComponent implements OnInit {
       && !(x == this.trueState[0] && y == this.trueState[1]))
   }
 
-  isCellFree(x,y): boolean {
-    let result = this.isInMap(x,y);
-
-    result = result && !(x == this.trueState[0] && y == this.trueState[1]);
-    for (let camera of this.cameras) {
-      result = result && !(x == camera.x && y == camera.y);
+  /**
+   * Checks if changing the cell type at the given position is allowed
+   * @param x
+   * @param y
+   */
+  isChangeAllowed(x, y): boolean {
+    if (!this.cellChangeActive || !this.isInMap(x,y))
+      return false;
+    if (this.cellChangeType == "camera") {
+      for (let camera of this.cameras) {
+        if (x == camera.x && y == camera.y){
+          console.log("potato");
+          return true;
+        }
+      }
+      return this.map[x][y] == "";
     }
-
-    return result;
+    else if (this.cellChangeType== "target"){
+      return this.map[x][y] == "";
+    }
+    else {
+      if (x == this.trueState[0] && y == this.trueState[1])
+        return false;
+      for (let camera of this.cameras) {
+        if (x == camera.x && y == camera.y)
+          return false;
+      }
+      return true;
+    }
+    return false;
   }
 
+  /**
+   * Change the type of a cell at a given point
+   * @param coord
+   */
   changeCell(coord: number[]) {
-    if (this.cellChangeActive && this.isCellFree(coord[0],coord[1])) {
-      // this.map[coord[0]][coord[1]] = this.cellChangeType;
+
+    console.log(this.cellChangeActive);
+
+    if (this.cellChangeActive && this.isChangeAllowed(coord[0], coord[1])) {
+      if (this.cellChangeType == "target") {
+        this.cellChangeActive = false;
+      }
       let params = new HttpParams();
       params = params.append('x', String(coord[0]));
       params = params.append('y', String(coord[1]));
       params = params.append('cellType', this.cellChangeType);
 
 
-      this.http.get<System>(this.baseUrl + "pomcp/modifyCell", {params: params}).subscribe(result => {
+      this.http.get<System>(this.baseUrl + "pomcp/modify-cell", {params: params}).subscribe(result => {
         this.map = result.map;
         this.trueState = result.trueState;
         this.probabilities = result.probabilities;
@@ -99,6 +132,21 @@ export class BoardComponent implements OnInit {
       this.cellChangeType = typeString;
       this.cellChangeActive = true;
     }
-
   }
+
+  setMapSize() {
+    let params = new HttpParams();
+    params = params.append('dx', String(this.mapSizeX?this.mapSizeX:this.map.length));
+    params = params.append('dy', String(this.mapSizeY?this.mapSizeY:this.map[0].length));
+
+    this.http.get<System>(this.baseUrl + "pomcp/map-size", {params: params}).subscribe(result => {
+      this.map = result.map;
+      this.trueState = result.trueState;
+      this.probabilities = result.probabilities;
+      this.camerasVision = result.camerasVision;
+      this.cameras = result.cameras;
+      this.movingOptions = result.movingOptions;
+    }, error => console.error(error));
+  }
+
 }

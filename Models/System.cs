@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
 using POMCP.Website.Models.Environment.Cells;
@@ -65,36 +66,41 @@ namespace POMCP.Website.Models
             {
                 camerasOrientations[camera] = -Math.PI / 2;
             }
-
-            d.SetProba(new State(6, 1, camerasOrientations), 1);
-            MarkovModel markovModel = new MarkovModel(world);
-            System s = new System(world, markovModel, d, 500, 3);
+            
+            System s = new System(world, new State(6, 1, camerasOrientations));
             s.AdvanceSystem(-1,-1);
             return s;
         }
 
-        public World World { get; }
+        private World World { get; }
 
-        private MarkovModel _model;
+        private readonly MarkovModel _model;
 
         private Distribution<State> CurrentDistribution { get; set; }
 
         private Action LastAction { get; set; }
 
-        public State TrueState { get; set; }
+        private State TrueState { get; set; }
+
+        private int TreeSamplesCount { get; set; } = 500;
+
+        private int TreeDepth { get; set; } = 3;
         
-        private int TreeSamplesCount { get; }
+        private int maxMapSize { get; } = 12;
 
-        private int TreeDepth { get; }
-
-        private System(World world, MarkovModel markovModel, Distribution<State> initial, int treeSamplesCount, int treeDepth)
+        private System(World world, State initialState)
         {
-            CurrentDistribution = initial;
-            TrueState = CurrentDistribution.Draw();
-            _model = markovModel;
+            TrueState = initialState;
             World = world;
-            TreeSamplesCount = treeSamplesCount;
-            TreeDepth = treeDepth;
+            _model = new MarkovModel(world);
+            InitializeSystem();
+        }
+
+        private void InitializeSystem()
+        {
+            World.InitializeCameras();
+            CurrentDistribution = new Distribution<State>();
+            CurrentDistribution.SetProba(TrueState, 1);
         }
 
         private ActionNode GetBestAction()
@@ -315,11 +321,14 @@ namespace POMCP.Website.Models
             {
                 case ("wall"):
                     if (!(TrueState.X == x && TrueState.Y == y))
-                        World.Map.AddObstacle(new Wall(x, y));
+                    {
+                        World.Map.Cells[x,y] =new Wall(x, y);
+                    }
+                        
                     break;
                 case ("glass"):
                     if (!(TrueState.X == x && TrueState.Y == y))
-                        World.Map.AddObstacle(new Glass(x, y));
+                        World.Map.Cells[x,y] = new Glass(x, y);
                     break;
                 case "target":
                     if (World.Map.IsCellFree(x, y))
@@ -329,14 +338,11 @@ namespace POMCP.Website.Models
                     }
                     break;
                 case "camera":
-                    
-                    Camera camera = World.IsCamera(x, y);
-                    if (camera != null)
+                    if (World.IsCamera(x, y, out Camera camera))
                     {
-                        World.Cameras.Remove(camera);
-                        TrueState.CamerasOrientations.Remove(camera);
+                        RemoveCamera(camera);
                     }
-                    if (World.IsCamera(x,y) == null && World.Map.IsCellFree(x, y))
+                    else if (World.Map.IsCellFree(x, y))
                     {
                         Camera newCamera = new AngularCamera(x, y);
                         World.AddCamera(newCamera);
@@ -347,11 +353,33 @@ namespace POMCP.Website.Models
                     World.Map.Cells[x,y] = null;
                     break;
             }
+            InitializeSystem();
+        }
 
-            World.InitializeCameras();
-            Distribution<State> d = new Distribution<State>();
-            d.SetProba(TrueState, 1);
-            CurrentDistribution = d;
+        public void RemoveCamera(Camera camera)
+        {
+            World.Cameras.Remove(camera);
+            TrueState.CamerasOrientations.Remove(camera);
+        }
+
+        public void ChangeMapSize(int dx, int dy)
+        {
+            dx = Math.Min(maxMapSize, dx);
+            dy = Math.Min(maxMapSize, dy);
+            
+            dx = Math.Max(TrueState.X , dx);
+            dy = Math.Max(TrueState.Y, dy);
+            
+            
+            World.Map.ResizeMap(dx, dy);
+            
+            foreach (Camera camera in World.Cameras.ToArray())
+            {
+                if (camera.X >= dx || camera.Y >= dy)
+                    RemoveCamera(camera);
+            }
+            
+            InitializeSystem();
         }
     }
 }

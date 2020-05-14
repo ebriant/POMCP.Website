@@ -28,7 +28,7 @@
   height: 20px;
   display: inline-block;
   position: relative;
-  left: 5px;
+  left: 0;
   top: 5px;
   margin: 0 5px;
   border: 1px solid black;
@@ -39,6 +39,36 @@
 }
 
 #legend {
-
   display: inline-block;
+}
+
+.cell-type-selected {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .5);
+}
+
+
+.quantity{
+  display:flex;
+  width:160px;
+}
+
+/* it will support chrome and firefox */
+.quantity input[type=number]::-webkit-inner-spin-button,
+.quantity input[type=number]::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+}
+
+.quantity input,.quantity button{
+  width:50px;
+  padding:.5em;
+  font-size:1.2rem;
+  text-align:center;
+  font-weight:900;
+  background:white;
+  border:1px solid #aaa;
+}
+
+.quantity input{
+  border-left:none;
+  border-right:none;
 }

@@ -32,15 +32,19 @@
             }
         }
 
-        public Camera IsCamera(int x, int y)
+        public bool IsCamera(int x, int y, out Camera outCamera)
         {
             foreach (Camera camera in Cameras)
             {
                 if (camera.X == x && camera.Y == y)
-                    return camera;
+                {
+                    outCamera = camera;
+                    return true;
+                }
+                
             }
-
-            return null;
+            outCamera = null;
+            return false;
         }
     }
 }

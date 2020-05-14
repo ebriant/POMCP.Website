@@ -16,7 +16,7 @@ namespace POMCP.Website.Models
         /// <returns></returns>
         private static World GetDefaultWorld()
         {
-            Map map = new Map(8,8);
+            Map map = new Map(10,10);
             
             map.AddObstacle(new Wall(0,4));
             map.AddObstacle(new Wall(1,4));
@@ -35,9 +35,7 @@ namespace POMCP.Website.Models
 
             Camera camera2 = new AngularCamera(0,7);
             world.AddCamera(camera2);
-            world.InitializeCameras();
-                
-                
+
             return world;
         }
     }
