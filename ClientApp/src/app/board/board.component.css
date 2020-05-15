@@ -5,45 +5,45 @@
 }
 
 #control button {
-  background-color: #F2F2F2;
+  background-color: transparent;
   border: 0;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
 }
 
 #control i {
-  color: #2E343F;
+  color: #23303B;
 }
 
 #control button:disabled i {
   color: #BABCBF;
 }
 
+#control button:hover:enabled i {
+  color: #385D84;
+}
+
 .grid-title {
    text-align: center;
+  font-size: 18px;
+  font-weight: bold;
  }
 
-.color-box {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  position: relative;
-  left: 0;
-  top: 5px;
-  margin: 0 5px;
-  border: 1px solid black;
-}
-
-.header-element {
-  display: inline-block;
-}
 
 #legend {
-  display: inline-block;
+  text-align: center;
 }
 
+.legend-element {
+  display: inline-block;
+  padding: 5px;
+}
+
+
 .cell-type-selected {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 0 8px 6px -6px rgba(0, 0, 0, .5);
+  -moz-box-shadow: 0 8px 6px -6px rgba(0, 0, 0, .5);
+  box-shadow: 0 8px 6px -6px rgba(0, 0, 0, .5);
 }
 
 
@@ -72,3 +72,31 @@
   border-left:none;
   border-right:none;
 }
+
+.number-input {
+  width: 35px;
+  border: none;
+}
+
+.btn:hover {
+  color: #23303B;
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  position: relative;
+  left: 1px;
+  top: 5px;
+  margin: 1px 5px;
+  border: 1px solid black;
+}
+
+.btn:hover .color-box {
+  width: 22px;
+  height: 22px;
+  margin: 0 4px;
+}
+
+

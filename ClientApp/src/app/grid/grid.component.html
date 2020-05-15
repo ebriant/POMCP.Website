@@ -1,38 +1,40 @@
-<svg height="320" width="320" class="camera-fov" *ngIf="camerasList.length > 0">
-  <line *ngFor="let camera of camerasList"
-        [attr.x1]="(camera.x+0.5) * getCellSize()"
-        [attr.y1]="(camera.y+0.5) * getCellSize()"
-        [attr.x2]="(camera.x+0.5) * getCellSize()+getVectorX(camera.orientation + camera.fov)"
-        [attr.y2]="(camera.y+0.5) * getCellSize()+getVectorY(camera.orientation + camera.fov)"
-        style="stroke:rgb(255,0,0);stroke-width:2" />
-  <line *ngFor="let camera of camerasList"
-        [attr.x1]="(camera.x+0.5) * getCellSize()"
-        [attr.y1]="(camera.y+0.5) * getCellSize()"
-        [attr.x2]="(camera.x+0.5) * getCellSize()+getVectorX(camera.orientation - camera.fov)"
-        [attr.y2]="(camera.y+0.5) * getCellSize()+getVectorY(camera.orientation - camera.fov)"
-        style="stroke:rgb(255,0,0);stroke-width:2" />
-</svg>
 
 <table id="board">
+  <svg height="340" width="340" class="camera-fov" *ngIf="camerasList.length > 0">
+    <line *ngFor="let camera of camerasList"
+          [attr.x1]="(camera.x+0.5) * getCellSize()"
+          [attr.y1]="(camera.y+0.5) * getCellSize()"
+          [attr.x2]="(camera.x+0.5) * getCellSize()+getVectorX(camera.orientation + camera.fov)"
+          [attr.y2]="(camera.y+0.5) * getCellSize()+getVectorY(camera.orientation + camera.fov)"
+          class="camera-line"/>
+    <line *ngFor="let camera of camerasList"
+          [attr.x1]="(camera.x+0.5) * getCellSize()"
+          [attr.y1]="(camera.y+0.5) * getCellSize()"
+          [attr.x2]="(camera.x+0.5) * getCellSize()+getVectorX(camera.orientation - camera.fov)"
+          [attr.y2]="(camera.y+0.5) * getCellSize()+getVectorY(camera.orientation - camera.fov)"
+          class="camera-line"/>
+  </svg>
+
   <tr *ngFor="let y of ordinateArray()">
     <td *ngFor="let x of abscissaArray()" class="cell"
         style="text-align: center;"
         [style.background-color]="getCellColor(x,y)"
-        [ngClass]="getCellClass(x,y)"
+        [ngClass]="getCellClass(x,y)" [class.cell-select] ="cellChangeActive"
         [style.cursor] = "cellChangeActive?'pointer':'default'"
         [style.width]="getCellSize() +'px'" [style.height]="getCellSize() +'px'"
-
+        [class.drop-btn]="!!probabilities"
         (click) = "cellChanged.emit([x,y])">
+
 <!--        (mousedown)="cellClick(x,y)"-->
 <!--        (mouseenter)="cellOver(x,y)"-->
 <!--        (mouseup)="isClicking=false"-->
 
-<!--      TODO solve clicking for android-->
-
 <!--      <i *ngIf="getCellClass(x,y) == 'camera'" class="fa fa-video-camera" style="position:absolute; text-align: center;"></i>-->
+      <a style="position: relative;">
+        <span *ngIf="!!probabilities" class="dropdown-content">Probability: {{Round(probabilities[x][y],4)}}</span>
+      </a>
 
     </td>
   </tr>
 </table>
-
 

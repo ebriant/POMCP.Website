@@ -1,6 +1,9 @@
 <body>
-  <app-nav-menu></app-nav-menu>
+  <app-nav-menu [gettingStarted]="gettingStartedComponent"></app-nav-menu>
+  <app-getting-started #gettingStartedComponent></app-getting-started>
+
   <div class="container">
     <app-board></app-board>
   </div>
+
 </body>

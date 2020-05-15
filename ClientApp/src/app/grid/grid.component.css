@@ -3,15 +3,20 @@
 }
 
 #board{
-  min-width: 320px;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  min-width: 340px;
+  margin: 20px auto;
 }
 
 .camera-fov{
   position: absolute;
-  margin-top:20px;
   pointer-events: none;
 }
+
+.camera-line {
+  stroke: #F1A009;
+  stroke-width:2
+}
+
+
 
 

@@ -82,11 +82,19 @@ namespace POMCP.Website.Models
 
         private State TrueState { get; set; }
 
-        private int TreeSamplesCount { get; set; } = 500;
+        // Number of iteration perform for the building of a sampling tree
+        public int TreeSamplesCount { get; set; } = 500;
 
-        private int TreeDepth { get; set; } = 3;
+        // Maximum depth of a tree
+        public int TreeDepth { get; set; } = 3;
         
-        private int maxMapSize { get; } = 12;
+        // 
+        public float Gama { get; set; }= 0.3f;
+        
+        // exploration parameter of the UCB searching,
+        public float C { get; set; } = 1.4f;
+        
+        private int MaxMapSize { get; } = 12;
 
         private System(World world, State initialState)
         {
@@ -105,7 +113,13 @@ namespace POMCP.Website.Models
 
         private ActionNode GetBestAction()
         {
-            SamplingTree tree = new SamplingTree(CurrentDistribution, TreeSamplesCount, TreeDepth, _model);
+            SamplingTree tree = new SamplingTree(
+                CurrentDistribution, 
+                _model,
+                TreeSamplesCount,
+                TreeDepth,
+                Gama,
+                C);
             return tree.GetBestAction();
         }
 
@@ -364,8 +378,8 @@ namespace POMCP.Website.Models
 
         public void ChangeMapSize(int dx, int dy)
         {
-            dx = Math.Min(maxMapSize, dx);
-            dy = Math.Min(maxMapSize, dy);
+            dx = Math.Min(MaxMapSize, dx);
+            dy = Math.Min(MaxMapSize, dy);
             
             dx = Math.Max(TrueState.X , dx);
             dy = Math.Max(TrueState.Y, dy);

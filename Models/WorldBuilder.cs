@@ -33,9 +33,6 @@ namespace POMCP.Website.Models
             Camera camera = new AngularCamera(7,7);
             world.AddCamera(camera);
 
-            Camera camera2 = new AngularCamera(0,7);
-            world.AddCamera(camera2);
-
             return world;
         }
     }

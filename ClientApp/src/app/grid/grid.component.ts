@@ -27,7 +27,6 @@ export class GridComponent implements OnInit {
   }
 
   cellClick(x,y) {
-    console.log(this.cellChangeActive);
     this.cellChanged.emit([x,y]);
     this.isClicking = true;
   }
@@ -56,7 +55,11 @@ export class GridComponent implements OnInit {
     if (!this.map) {
       return 0
     }
-    return Math.round(320 / this.map.length);
+    return Math.round(340 / this.map.length);
+  }
+
+  Round(x: number,n: number): number{
+    return Number(x.toFixed(n))
   }
 
   getCellClass(x:number, y:number) {

@@ -42,6 +42,12 @@ namespace POMCP.Website.Controllers
             Models.System.Instance.ChangeMapSize(dx-2,dy-2);
             return Models.System.Instance.GetSystemView();
         }
+        
+        [HttpPost]
+        [Route("tree-depth")]
+        public void SetTreeDepth([FromQuery] int value)
+        {
+            Models.System.Instance.TreeDepth = value;
+        }
     }
-    
 }

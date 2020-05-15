@@ -1,37 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-}
-
-code {
-  color: #e01a76;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-.tooltip-example {
-  text-align: center;
-  padding: 0 50px;
-}
-.tooltip-example [tooltip] {
-  display: inline-block;
-  margin: 50px 20px;
-  width: 180px;
-  height: 50px;
-  border: 1px solid gray;
-  border-radius: 5px;
-  line-height: 50px;
-  text-align: center;
-}
+
 .ng-tooltip {
   position: absolute;
   max-width: 150px;
@@ -86,12 +59,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-color: #F2F2F2;
 }
 
+.cell-select:hover {
+  border: 2px solid #262626;
+}
+
 .wall {
   background-color: #262626;
 }
 
 .glass {
-  background-color: #ACC8D9;
+  background-color: #AED3F2;
 }
 
 .target {
@@ -99,7 +76,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .camera {
-  background-color: #F28705;
+  background-color: #F37705;
 }
 
 .unobservable {
@@ -108,4 +85,38 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .observable {
   background-color: #BFBFBF;
+}
+
+
+.navbar {
+  background-color: #23303B;
+}
+
+.nav-item, .navbar-brand, .navbar-toggler{
+  color: #F2F2F2 !important;
+}
+
+.nav-item a:hover{
+  color: #AED3F2;
+}
+
+.drop-btn {
+  cursor: pointer;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: rgba(255,255,255, 0.75);
+  min-width: 140px;
+  min-height: 20px;
+  z-index: 2;
+  top: -43px;
+  left: -75px;
+}
+
+/* Show the dropdown menu on hover */
+.drop-btn:hover .dropdown-content {
+  display: block;
 }

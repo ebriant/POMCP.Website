@@ -1,35 +1,100 @@
 <header>
-  <nav
-    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
-  >
-    <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">POMCP Visualization <a style="font-size: 11px">by Emilien Briant</a></a>
-    </div>
+  <div class="mb-3">
+    <nav
+      class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow"
+    >
+      <div class="container">
+        <a class="navbar-brand">POMCP Visualization <a style="font-size: 11px">by Emilien Briant</a></a>
+      </div>
 
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target=".navbar-collapse"
-      aria-label="Toggle navigation"
-      [attr.aria-expanded]="isExpanded"
-      (click)="toggle()"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div
-      class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
-      [ngClass]="{ show: isExpanded }"
-    >
-      <ul class="navbar-nav flex-grow">
-<!--        <li-->
-<!--          class="nav-item"-->
-<!--          [routerLinkActive]="['link-active']"-->
-<!--          [routerLinkActiveOptions]="{ exact: true }"-->
-<!--        >-->
-<!--          <a class="nav-link text-dark" [routerLink]="['/']">Home</a>-->
-<!--        </li>-->
-      </ul>
-    </div>
-  </nav>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target=".navbar-collapse"
+        aria-label="Toggle navigation"
+        [attr.aria-expanded]="isExpanded"
+        (click)="toggle()"
+      >
+        <span class="fa fa-bars"></span>
+      </button>
+      <div
+        class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
+        [ngClass]="{ show: isExpanded }"
+      >
+        <ul class="navbar-nav flex-grow">
+          <li class="nav-item dropdown" (click)="toggleParams()">
+            <a class="nav-link dropdown-toggle btn" data-toggle="dropdown">Parameters</a>
+          </li>
+
+          <li class="nav-item dropdown" (click)="toggleMap()">
+            <a class="nav-link dropdown-toggle btn" data-toggle="dropdown">Maps</a>
+          </li>
+
+
+          <li class="nav-item">
+            <a class="nav-link btn" (click)="gettingStarted.pageCounter=0"
+            >Help</a
+            >
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+
+    <nav *ngIf="mapPanel" class="navbar navbar-expand-md" style="top: -1px">
+      <div class="navbar-collapse collapse pt-2 pt-md-0">
+        <ul class="navbar-nav">
+
+          <li class="nav-item active drop-btn">
+            <a class="nav-link">The Museum</a>
+            <div class="dropdown-content">
+              <p>A large map with several small rooms</p>
+              <img src="Museum.png">
+            </div>
+          </li>
+
+          <li class="nav-item active drop-btn">
+            <a class="nav-link">The small room</a>
+            <div class="dropdown-content">
+              <p>A small map with a single hidden room</p>
+              <img src="small_room.jpg">
+            </div>
+          </li>
+          <li class="nav-item active drop-btn">
+            <a class="nav-link">The Coridor</a>
+            <div class="dropdown-content">
+              <p>A long corridor watched by multiple cameras</p>
+              <img src="Museum.png">
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <nav *ngIf="parametersPanel" class="navbar navbar-expand-md" style="top: -1px">
+      <div class="navbar-collapse collapse pt-2 pt-md-0">
+        <ul class="navbar-nav">
+
+          <li class="nav-item">
+            <a class="nav-link">Searching tree depth
+              <div style="display: inline-block;" class="drop-btn">
+                <i class="far fa-question-circle "></i>
+                <div class="dropdown-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Integer sodales, ex efficitur auctor vehicula, nisi lorem accumsan velit,
+                  nec fermentum ligula ante et arcu. Quisque.
+                </p>
+
+              </div>
+              </div>
+
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
 </header>

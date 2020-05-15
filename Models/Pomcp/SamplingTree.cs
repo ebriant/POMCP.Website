@@ -13,12 +13,7 @@ namespace POMCP.Website.Models.Pomcp
         /// Markov model used
         /// </summary>
         private MarkovModel _markovModel;
-
         
-        public const float gama = 0.3f;
-        
-        // exploration parameter of the UCB searching,
-        private const float C = 1.4f;
         
         //
         /// <summary>
@@ -28,14 +23,14 @@ namespace POMCP.Website.Models.Pomcp
         /// <param name="sampleNumber">number of samples in the tree</param>
         /// <param name="maxDepth">maximum depth for each branch</param>
         /// <param name="markovModel">model</param>
-        public SamplingTree(Distribution<State> d, int sampleNumber, int maxDepth, MarkovModel markovModel)
+        public SamplingTree(Distribution<State> d, MarkovModel markovModel, int sampleNumber, int maxDepth, float gama, float C)
         {
             // The root is the given distribution
             _markovModel = markovModel;
             Root = new BeliefNode(d, null, null, markovModel);
             for (int i = 0; i < sampleNumber; i++)
             {
-                GrowTree(maxDepth);
+                GrowTree(maxDepth, gama, C);
             }
         }
 
@@ -46,14 +41,14 @@ namespace POMCP.Website.Models.Pomcp
         /// <param name="sampleNumber"></param>
         /// <param name="maxDepth"></param>
         /// <param name="markovModel"></param>
-        public SamplingTree(BeliefNode n, int sampleNumber, int maxDepth, MarkovModel markovModel)
+        public SamplingTree(BeliefNode n, MarkovModel markovModel, int sampleNumber, int maxDepth, float gama, float C)
         {
             // The root is an existing beliefNode, useful to conserve the previous explorations
             Root = n;
-            this._markovModel = markovModel;
+            _markovModel = markovModel;
             for (int i = 0; i < sampleNumber; i++)
             {
-                GrowTree(maxDepth);
+                GrowTree(maxDepth, gama, C);
             }
         }
         
@@ -63,7 +58,7 @@ namespace POMCP.Website.Models.Pomcp
         /// Function that perform one exploration of the tree, and make it grow by a pair of action & belief nodes
         /// </summary>
         /// <param name="maxDepth"></param>
-        public void GrowTree(int maxDepth)
+        public void GrowTree(int maxDepth, float gama, float C)
         {
             BeliefNode beliefNode = Root;
             Root.IncrementOccurrence();

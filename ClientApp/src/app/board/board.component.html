@@ -1,109 +1,112 @@
-<app-getting-started #gettingStartedComponent></app-getting-started>
+<!--<app-getting-started #gettingStartedComponent></app-getting-started>-->
 
-<button type="button" class="btn" (click)="gettingStartedComponent.pageCounter=0">Getting Started</button>
+<!--<button type="button" class="btn" (click)="gettingStartedComponent.pageCounter=0">Getting Started</button>-->
 
-<label>
-  Map Width
-  <input class="" type="number" min="{{trueState?trueState[0]+1:0}}" max="20" value="{{map?map.length:0}}"
-         [(ngModel)]="mapSizeX" (change)="setMapSize()">
-</label>
-<label>
-  Map Height
-  <input class="" type="number" min="{{trueState?trueState[1]+1:0}}" max="20" value="{{map?map[0].length:0}}"
-         [(ngModel)]="mapSizeY" (change)="setMapSize()">
-</label>
 
-<div style="padding: 10px; display: inline-block">
-  <table id="control">
-    <tr>
-      <td>
-        <button type="button" (click)="updateSystem(-1,-1)" [disabled]="isMoving || !movingOptions[0][0]">
-          <i class="fa fa-arrow-circle-o-left fa-rotate-45 fa-xs"></i>
-        </button>
-      </td>
-      <td>
-        <button type="button"
-                (click)="updateSystem(0,-1)" [disabled]="isMoving || !movingOptions[1][0]"
-                tooltip="move upward" placement="top" delay="50">
-          <i class="fa fa-arrow-circle-o-up fa-2x"></i>
-        </button>
-      </td>
-      <td>
-        <button type="button" (click)="updateSystem(1,-1)" [disabled]="isMoving || !movingOptions[2][0]">
-          <i class="fa fa-arrow-circle-o-up fa-2x fa-rotate-45"></i>
-        </button>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <button type="button" (click)="updateSystem(-1,0)" [disabled]="isMoving || !movingOptions[0][1]">
-          <i class="fa fa-arrow-circle-o-left fa-2x"></i>
-        </button>
-      </td>
-      <td>
-        <button type="button" (click)="updateSystem(0,0)" [disabled]="isMoving || !movingOptions[1][1]">
-          <i class="fa fa-circle-o fa-2x"></i>
-        </button>
-      </td>
-      <td>
-        <button type="button" (click)="updateSystem(1,0)" [disabled]="isMoving || !movingOptions[2][1]">
-          <i class="fa fa-arrow-circle-o-right fa-2x"></i>
-        </button>
-      </td>
-    <tr>
-      <td>
-        <button type="button" (click)="updateSystem(-1,1)" [disabled]="isMoving || !movingOptions[0][2]">
-          <i class="fa fa-arrow-circle-o-down fa-2x fa-rotate-45"></i>
-        </button>
-      </td>
-      <td>
-        <button type="button" (click)="updateSystem(0,1)" [disabled]="isMoving || !movingOptions[1][2]">
-          <i class="fa fa-arrow-circle-o-down fa-2x"></i>
-        </button>
-      </td>
-      <td>
-        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movingOptions[2][2]">
-          <i class="fa fa-arrow-circle-o-right fa-2x fa-rotate-45"></i>
-        </button>
-      </td>
-    </tr>
 
-  </table>
-</div>
 
 <div id="legend">
-  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('')"
+  <label>
+    Map size (
+    <input class="number-input" type="number" min="{{trueState?trueState[0]+1:0}}" max="14" value="{{map?map.length:0}}"
+           [(ngModel)]="mapSizeX" (change)="setMapSize()">
+  </label>
+  <label>
+    ,
+    <input class="number-input" type="number" min="{{trueState?trueState[1]+1:0}}" max="14" value="{{map?map[0].length:0}}"
+           [(ngModel)]="mapSizeY" (change)="setMapSize()">
+    )
+  </label>
+  <div class="legend-element btn" (click)="setCellChangeType('')"
        [class.cell-type-selected]="cellChangeActive && cellChangeType==''">
-
     <div class="color-box cell"></div>
     Empty space
   </div>
 
-  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('wall')"
+  <div class="legend-element btn" (click)="setCellChangeType('wall')"
        [class.cell-type-selected]="cellChangeActive && cellChangeType=='wall'">
     <div class="color-box cell wall"></div>
     Wall
   </div>
 
-    <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('glass')"
+    <div class="legend-element btn" (click)="setCellChangeType('glass')"
          [class.cell-type-selected]="cellChangeActive && cellChangeType=='glass'">
       <div class="color-box cell glass"></div>
       Glass
     </div>
 
 
-  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('target')"
+  <div class="legend-element btn" (click)="setCellChangeType('target')"
        [class.cell-type-selected]="cellChangeActive && cellChangeType=='target'">
     <div class="color-box cell target"></div>
     Target
   </div>
 
-  <div style="display: inline-block; cursor: pointer;" (click)="setCellChangeType('camera')"
+  <div class="legend-element btn" (click)="setCellChangeType('camera')"
        [class.cell-type-selected]="cellChangeActive && cellChangeType=='camera'">
     <div class="color-box cell camera"></div>
     Camera
   </div>
 
+</div>
+
+
+<div style="padding: 10px;">
+  Move the target
+  <table id="control">
+    <tr>
+      <td>
+        <button type="button" (click)="updateSystem(-1,-1)" [disabled]="isMoving || !movingOptions[0][0]">
+          <i class="fa fa-arrow-circle-o-left fa-rotate-45 fa-lg"></i>
+        </button>
+      </td>
+      <td>
+        <button type="button"
+                (click)="updateSystem(0,-1)" [disabled]="isMoving || !movingOptions[1][0]">
+          <i class="fa fa-arrow-circle-o-up fa-lg"></i>
+        </button>
+      </td>
+      <td>
+        <button type="button" class="" (click)="updateSystem(1,-1)" [disabled]="isMoving || !movingOptions[2][0]">
+          <i class="fa fa-arrow-circle-o-up fa-rotate-45 fa-lg"></i>
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button type="button" (click)="updateSystem(-1,0)" [disabled]="isMoving || !movingOptions[0][1]">
+          <i class="fa fa-arrow-circle-o-left fa-lg"></i>
+        </button>
+      </td>
+      <td>
+        <button type="button" (click)="updateSystem(0,0)" [disabled]="isMoving || !movingOptions[1][1]">
+          <i class="fa fa-circle-o fa-lg"></i>
+        </button>
+      </td>
+      <td>
+        <button type="button" (click)="updateSystem(1,0)" [disabled]="isMoving || !movingOptions[2][1]">
+          <i class="fa fa-arrow-circle-o-right fa-lg"></i>
+        </button>
+      </td>
+    <tr>
+      <td>
+        <button type="button" (click)="updateSystem(-1,1)" [disabled]="isMoving || !movingOptions[0][2]">
+          <i class="fa fa-arrow-circle-o-down fa-rotate-45 fa-lg"></i>
+        </button>
+      </td>
+      <td>
+        <button type="button" (click)="updateSystem(0,1)" [disabled]="isMoving || !movingOptions[1][2]">
+          <i class="fa fa-arrow-circle-o-down fa-lg"></i>
+        </button>
+      </td>
+      <td>
+        <button type="button" (click)="updateSystem(1,1)" [disabled]="isMoving || !movingOptions[2][2]">
+          <i class="fa fa-arrow-circle-o-right fa-lg fa-rotate-45"></i>
+        </button>
+      </td>
+    </tr>
+
+  </table>
 </div>
 
 <div class="container">
