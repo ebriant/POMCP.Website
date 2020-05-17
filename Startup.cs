@@ -27,9 +27,14 @@ namespace POMCP.Website
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddSession(so =>
+            
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
             {
-                
+                options.IdleTimeout = TimeSpan.FromSeconds(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
             });
         }
 

@@ -381,8 +381,8 @@ namespace POMCP.Website.Models
             dx = Math.Min(MaxMapSize, dx);
             dy = Math.Min(MaxMapSize, dy);
             
-            dx = Math.Max(TrueState.X , dx);
-            dy = Math.Max(TrueState.Y, dy);
+            dx = Math.Max(TrueState.X+1 , dx);
+            dy = Math.Max(TrueState.Y+1, dy);
             
             
             World.Map.ResizeMap(dx, dy);

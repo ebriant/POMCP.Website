@@ -2,12 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import {GridComponent} from "./grid/grid.component";
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BoardComponent } from './board/board.component';
@@ -18,8 +14,6 @@ import { GettingStartedComponent } from './getting-started/getting-started.compo
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
-    FetchDataComponent,
     GridComponent,
     BoardComponent,
     TooltipDirective,
@@ -29,9 +23,6 @@ import { GettingStartedComponent } from './getting-started/getting-started.compo
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-    ]),
     NoopAnimationsModule
   ],
   providers: [],
