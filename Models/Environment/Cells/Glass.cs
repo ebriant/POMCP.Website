@@ -1,8 +1,11 @@
-﻿﻿namespace POMCP.Website.Models.Environment.Cells
+﻿﻿using System;
+
+ namespace POMCP.Website.Models.Environment.Cells
 {
+    
     public class Glass: Obstacle
     {
-        public Glass(int x, int y) : base(x, y)
+        public Glass()
         {
             CellType = "glass";
         }

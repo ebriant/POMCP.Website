@@ -7,11 +7,8 @@ namespace POMCP.Website.Models.Cameras
 {
     public class AngularCamera : Camera
     {
-        
-
         public AngularCamera(int x, int y) : base(x, y) {}
-        
-        
+
         /// <summary>
         /// Return the cameras's field of view using the angle
         /// </summary>

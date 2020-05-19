@@ -8,9 +8,10 @@ namespace POMCP.Website.Models.Pomcp
     /// <summary>
     /// Class representing the Markov Model that dictates how the system changes at every time step
     /// </summary>
+    
     public class MarkovModel
     {
-        public World World { get; }
+        private World World { get; }
 
         public MarkovModel(World world)
         {
@@ -36,7 +37,7 @@ namespace POMCP.Website.Models.Pomcp
             List<Action> actionsList = new List<Action>();
             actionsList.Add(new Action());
             
-            foreach (Camera camera in World.Cameras)
+            foreach (Camera camera in state.CamerasOrientations.Keys)
             {
                 List<Action> newActionsList = new List<Action>();
                 foreach (Action a in actionsList)
@@ -50,33 +51,7 @@ namespace POMCP.Website.Models.Pomcp
 
                     actionsList = newActionsList;
                 }
-                // if (actionsList.Count == 0)
-                // {
-                //     actionsList = new List<Action>();
-                //     foreach (double orientationChange in camera.GetActions())
-                //     {
-                //         actionsList.Add(new Action(orientationChange, camera));
-                //     }
-                // }
-                // else
-                // {
-                //     List<Action> newActionsList = new List<Action>();
-                //
-                //     foreach (Action a in actionsList)
-                //     {
-                //         foreach (double o in camera.GetActions())
-                //         {
-                //             Dictionary<Camera, double> orient = a.OrientationsChanges;
-                //             orient[camera] = o;
-                //
-                //             newActionsList.Add(new Action(orient));
-                //         }
-                //     }
-                //
-                //     actionsList = newActionsList;
-                // }
             }
-
             return actionsList;
         }
 
@@ -132,7 +107,7 @@ namespace POMCP.Website.Models.Pomcp
         public double GetStateValue(State s)
         {
             double value = 0;
-            foreach (Camera camera in World.Cameras)
+            foreach (Camera camera in s.CamerasOrientations.Keys)
             {
                 value += camera.GetValue(s);
             }
@@ -190,7 +165,7 @@ namespace POMCP.Website.Models.Pomcp
             // New distribution that contains the states after the transition (i.e after movement of the target)
             Distribution<State> dnew = new Distribution<State>();
             foreach (State s1 in d1.GetKeys()) {
-                Distribution<State> transition = World.Target.GetTransition(s1, this.GetAllState(s1));
+                Distribution<State> transition = World.Target.GetTransition(s1, GetAllState(s1));
 
                 foreach (State s2 in transition.GetKeys()){
                     dnew.SetProba(s2, dnew.GetProba(s2) + d1.GetProba(s1) * transition.GetProba(s2));
@@ -215,7 +190,7 @@ namespace POMCP.Website.Models.Pomcp
             {
                 foreach (State s in d.GetKeys()) {
                     bool visible = false;
-                    foreach (Camera c in World.Cameras) {
+                    foreach (Camera c in s.CamerasOrientations.Keys) {
                         if (c.GetVision(s.CamerasOrientations[c])[s.X,s.Y])
                             visible = true;
                     }

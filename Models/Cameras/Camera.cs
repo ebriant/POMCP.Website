@@ -6,17 +6,21 @@ using POMCP.Website.Models.Pomcp;
 
 namespace POMCP.Website.Models.Cameras
 {
-    public abstract class Camera: Cell
+    public abstract class Camera
     {
+	    
+	    public int X { get;}
+	    public int Y { get;}
 	    public double FOV { get; } = Math.PI / 8;
 
 	    public bool[,] VisibleCells;
 	    
 	    
 	    
-        public Camera(int x, int y) : base(x,y)
+        public Camera(int x, int y)
         {
-	        CellType = "camera";
+	        X = x;
+	        Y = y;
         }
 
         public void Initialize(CameraVision vision)

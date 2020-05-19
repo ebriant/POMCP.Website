@@ -1,8 +1,10 @@
-﻿﻿using System.Collections.Generic;
+﻿﻿using System;
+ using System.Collections.Generic;
  using POMCP.Website.Models.Pomcp;
 
  namespace POMCP.Website.Models.Target
 {
+    
     public class TargetMotor
     {
         public Distribution<State> GetTransition(State s1, List<State> l)

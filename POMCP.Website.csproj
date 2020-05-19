@@ -31,6 +31,16 @@
     <None Include="ClientApp\src\app\getting-started\message.ts" />
     <None Include="ClientApp\src\app\map.ts" />
     <None Include="ClientApp\src\app\tooltip.directive.ts" />
+    <None Remove="Images\**" />
+    <Content Remove="Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Images\**" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

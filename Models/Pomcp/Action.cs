@@ -5,6 +5,7 @@ using POMCP.Website.Models.Cameras;
 
 namespace POMCP.Website.Models.Pomcp
 {
+    
     public class Action
     {
         /// <summary>

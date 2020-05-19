@@ -1,11 +1,11 @@
-﻿﻿using System.Collections.Generic;
- using System.Runtime.Intrinsics.X86;
+﻿﻿using System;
+ using System.Collections.Generic;
  using POMCP.Website.Models.Cameras;
- using POMCP.Website.Models.Environment.Cells;
 
 
  namespace POMCP.Website.Models.Environment
 {
+    
     public class World
     {
         //The base map containing only the obstacles (no camera or target)
@@ -15,9 +15,15 @@
         
         public List<Camera> Cameras { get; }
         
-        public World(Map map, Target.Target target) {
+        public World(Map map) {
             Map = map;
-            Target = target;
+            Target = new Target.Target();
+            Cameras = new List<Camera>();
+        }
+        
+        public World(string[][] mapStringArray) {
+            Map = new Map(mapStringArray);
+            Target = new Target.Target();
             Cameras = new List<Camera>();
         }
 

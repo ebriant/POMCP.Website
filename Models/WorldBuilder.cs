@@ -18,17 +18,15 @@ namespace POMCP.Website.Models
         {
             Map map = new Map(7,7);
             
-            map.AddObstacle(new Wall(0,4));
-            map.AddObstacle(new Wall(2,4));
-            map.AddObstacle(new Wall(3,4));
-            map.AddObstacle(new Wall(4,4));
-            map.AddObstacle(new Wall(4,3));
-            map.AddObstacle(new Wall(4,2));
-            map.AddObstacle(new Wall(4,0));
+            map.AddObstacle(0,4,new Wall());
+            map.AddObstacle(2,4,new Wall());
+            map.AddObstacle(3,4,new Wall());
+            map.AddObstacle(4,4,new Wall());
+            map.AddObstacle(4,3,new Wall());
+            map.AddObstacle(4,2,new Wall());
+            map.AddObstacle(4,0,new Wall());
             
-            Target.Target target = new Target.Target();
-            
-            World world = new World(map, target);
+            World world = new World(map);
 
             Camera camera = new AngularCamera(6,6);
             world.AddCamera(camera);
@@ -40,39 +38,33 @@ namespace POMCP.Website.Models
         {
             Map map = new Map(11,11);
             
-            map.AddObstacle(new Wall(3,0));
-            map.AddObstacle(new Wall(3,1));
-            map.AddObstacle(new Wall(3,3));
-            map.AddObstacle(new Wall(3,4));
-            map.AddObstacle(new Wall(3,5));
-            map.AddObstacle(new Wall(2,5));
-            map.AddObstacle(new Wall(0,5));
-            
-            map.AddObstacle(new Wall(7,0));
-            map.AddObstacle(new Wall(7,1));
-            map.AddObstacle(new Wall(7,3));
-            map.AddObstacle(new Wall(7,4));
-            map.AddObstacle(new Wall(7,5));
-            map.AddObstacle(new Wall(8,5));
-            map.AddObstacle(new Wall(10,5));
-            
-            map.AddObstacle(new Wall(0,8));
-            map.AddObstacle(new Wall(2,8));
-            map.AddObstacle(new Wall(3,8));
-            map.AddObstacle(new Wall(3,9));
-            
-            map.AddObstacle(new Wall(10,8));
-            map.AddObstacle(new Wall(8,8));
-            map.AddObstacle(new Wall(7,8));
-            map.AddObstacle(new Wall(7,9));
-            
-            map.AddObstacle(new Glass(4,5));
-            map.AddObstacle(new Glass(5,5));
-            map.AddObstacle(new Glass(6,5));
-            
-            Target.Target target = new Target.Target();
-            
-            World world = new World(map, target);
+            map.AddObstacle(3,0,new Wall());
+            map.AddObstacle(3,1,new Wall());
+            map.AddObstacle(3,3,new Wall());
+            map.AddObstacle(3,4,new Wall());
+            map.AddObstacle(3,5,new Wall());
+            map.AddObstacle(2,5,new Wall());
+            map.AddObstacle(0,5,new Wall());
+            map.AddObstacle(7,0,new Wall());
+            map.AddObstacle(7,1,new Wall());
+            map.AddObstacle(7,3,new Wall());
+            map.AddObstacle(7,4,new Wall());
+            map.AddObstacle(7,5,new Wall());
+            map.AddObstacle(8,5,new Wall());
+            map.AddObstacle(10,5,new Wall());
+            map.AddObstacle(0,8,new Wall());
+            map.AddObstacle(2,8,new Wall());
+            map.AddObstacle(3,8,new Wall());
+            map.AddObstacle(3,9,new Wall());
+            map.AddObstacle(10,8,new Wall());
+            map.AddObstacle(8,8,new Wall());
+            map.AddObstacle(7,8,new Wall());
+            map.AddObstacle(7,9,new Wall());
+            map.AddObstacle(4,5,new Glass());
+            map.AddObstacle(5,5,new Glass());
+            map.AddObstacle(6,5,new Glass());
+
+            World world = new World(map);
 
             Camera camera = new AngularCamera(5,7);
             world.AddCamera(camera);

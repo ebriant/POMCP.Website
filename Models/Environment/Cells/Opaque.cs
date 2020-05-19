@@ -1,4 +1,6 @@
-﻿﻿namespace POMCP.Website.Models.Environment.Cells
+﻿﻿using System;
+
+ namespace POMCP.Website.Models.Environment.Cells
 {
     public interface Opaque
     {

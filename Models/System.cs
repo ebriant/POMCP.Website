@@ -9,14 +9,15 @@ using Action = POMCP.Website.Models.Pomcp.Action;
 
 namespace POMCP.Website.Models
 {
+    [Serializable]
     public struct CameraProperties
     {
-        public int X { get; }
-        public int Y { get; }
-        public double Orientation { get; }
-        public double Fov { get; }
-
-
+        public int X { get; set; }
+        public int Y { get; set; }
+        public double Orientation { get; set; }
+        public double Fov { get; set; }
+        
+        
         public CameraProperties(int x, int y, double orientation, double fov)
         {
             X = x;
@@ -31,14 +32,19 @@ namespace POMCP.Website.Models
         }
     }
     
+    
+    /// <summary>
+    /// Structure that represents the current state of the system in an easy processable way for the view
+    /// </summary>
+    [Serializable]
     public struct SystemView
     {
-        public string[][] Map { get; }
-        public int[] TrueState { get; }
-        public CameraProperties[] Cameras { get; }
-        public double[][] Probabilities { get; }
-        public int[][] CamerasVision { get; }
-        public bool[][] MovingOptions { get; }
+        public string[][] Map { get; set; }
+        public int[] TrueState { get; set; }
+        public CameraProperties[] Cameras { get; set; }
+        public double[][] Probabilities { get; set; }
+        public int[][] CamerasVision { get; set; }
+        public bool[][] MovingOptions { get; set; }
 
         public SystemView(string[][] map, int[] trueState, CameraProperties[] cameras, double[][] probabilities,
             int[][] camerasVision, bool[][] movingOptions)
@@ -52,11 +58,12 @@ namespace POMCP.Website.Models
         }
     }
 
-
+    
     public class System
     {
-        public static System Instance = GetInstance();
-        private static System GetInstance()
+        public static System Instance = GetStartingSystem();
+
+        public static System GetStartingSystem()
         {
             World world = WorldBuilder.DefaultWorld;
             Distribution<State> d = new Distribution<State>();
@@ -67,8 +74,7 @@ namespace POMCP.Website.Models
                 camerasOrientations[camera] = -Math.PI / 2;
             }
             
-            System s = new System(world, new State(6, 1, camerasOrientations));
-            s.AdvanceSystem(-1,-1);
+            System s = new System(world, new State(0, 0, camerasOrientations));
             return s;
         }
 
@@ -78,7 +84,7 @@ namespace POMCP.Website.Models
 
         private Distribution<State> CurrentDistribution { get; set; }
 
-        private Action LastAction { get; set; }
+        
 
         private State TrueState { get; set; }
 
@@ -96,12 +102,47 @@ namespace POMCP.Website.Models
         
         private int MaxMapSize { get; } = 12;
 
-        private System(World world, State initialState)
+        public System(World world, State initialState)
         {
             TrueState = initialState;
             World = world;
-            _model = new MarkovModel(world);
+            _model = new MarkovModel(World);
             InitializeSystem();
+        }
+        
+        /// <summary>
+        /// Create a system given the system view. This is used to restore the System for each Session
+        /// </summary>
+        /// <param name="systemView"></param>
+        public System(SystemView systemView)
+        {
+            
+            World = new World(systemView.Map);
+            Dictionary<Camera, double> camerasOrientation = new Dictionary<Camera, double>();
+            foreach (CameraProperties cameraProp in systemView.Cameras)
+            {
+                //Correct the offset due to the addition of the walls in the system view
+                Camera camera = new AngularCamera(cameraProp.X-1, cameraProp.Y-1);
+                World.AddCamera(camera);
+                camerasOrientation[camera] = cameraProp.Orientation;
+            }
+            // Remove if possible
+            World.InitializeCameras();
+            _model = new MarkovModel(World);
+
+            TrueState = new State(systemView.TrueState[0]-1,systemView.TrueState[1]-1, camerasOrientation);
+            Distribution<State> d = new Distribution<State>();
+            // Ignore the first and last row/column to account for the offset caused by the outside walls
+            for (int i = 1; i < systemView.Probabilities.Length-1; i++)
+            {
+                for (int j = 1; j < systemView.Probabilities[i].Length-1; j++)
+                {
+                    if (systemView.Probabilities[i][j] > 0)
+                        d.SetProba(new State(i-1,j-1,camerasOrientation), systemView.Probabilities[i][j]);
+                }
+            }
+            CurrentDistribution = d;
+            
         }
 
         private void InitializeSystem()
@@ -125,20 +166,18 @@ namespace POMCP.Website.Models
 
         public void AdvanceSystem(int? dx, int? dy)
         {
-            ActionNode actionNode = GetBestAction();
-            LastAction = actionNode.Action;
-
+            Action action = GetBestAction().Action;
 
             if (dx != null && dy != null && World.Map.IsCellFree((int) (TrueState.X + dx), (int) (TrueState.Y + dy)))
             {
                 TrueState = _model.GetActionResult(
                     new State((int) (TrueState.X + dx), (int) (TrueState.Y + dy), TrueState.CamerasOrientations),
-                    LastAction
+                    action
                 );
             }
             else
             {
-                TrueState = _model.ApplyTransition(TrueState, LastAction).Draw();
+                TrueState = _model.ApplyTransition(TrueState, action).Draw();
             }
 
 
@@ -156,7 +195,7 @@ namespace POMCP.Website.Models
                 }
             }
 
-            CurrentDistribution = _model.ApplyTransition(CurrentDistribution, LastAction);
+            CurrentDistribution = _model.ApplyTransition(CurrentDistribution, action);
             CurrentDistribution = _model.ApplyObservation(CurrentDistribution, observation);
         }
 
@@ -187,7 +226,7 @@ namespace POMCP.Website.Models
                 for (int j = 0; j < result[i].Length; j++)
                 {
                     if (i == 0 || j == 0 || i == result.Length - 1 || j == result[i].Length - 1)
-                        result[i][j] = Wall.CellTypeString;
+                        result[i][j] = new Wall().CellType;
                     else
                     {
                         result[i][j] = cellArray[i - 1][j - 1];
@@ -336,13 +375,13 @@ namespace POMCP.Website.Models
                 case ("wall"):
                     if (!(TrueState.X == x && TrueState.Y == y))
                     {
-                        World.Map.Cells[x,y] =new Wall(x, y);
+                        World.Map.Cells[x,y] =new Wall();
                     }
                         
                     break;
                 case ("glass"):
                     if (!(TrueState.X == x && TrueState.Y == y))
-                        World.Map.Cells[x,y] = new Glass(x, y);
+                        World.Map.Cells[x,y] = new Glass();
                     break;
                 case "target":
                     if (World.Map.IsCellFree(x, y))
