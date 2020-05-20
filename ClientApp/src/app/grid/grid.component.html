@@ -1,4 +1,3 @@
-
 <table id="board">
   <svg height="340" width="340" class="camera-fov" *ngIf="camerasList.length > 0">
     <line *ngFor="let camera of camerasList"
@@ -19,21 +18,15 @@
     <td *ngFor="let x of abscissaArray()" class="cell"
         style="text-align: center;"
         [style.background-color]="getCellColor(x,y)"
-        [ngClass]="getCellClass(x,y)" [class.cell-select] ="cellChangeActive"
-        [style.cursor] = "cellChangeActive?'pointer':'default'"
+        [ngClass]="getCellClass(x,y)" [class.cell-select]="cellChangeActive"
+        [style.cursor]="cellChangeActive?'pointer':'default'"
         [style.width]="getCellSize() +'px'" [style.height]="getCellSize() +'px'"
         [class.drop-btn]="!!probabilities"
-        (click) = "cellChanged.emit([x,y])">
+        (click)="cellChanged.emit([x,y])">
 
-<!--        (mousedown)="cellClick(x,y)"-->
-<!--        (mouseenter)="cellOver(x,y)"-->
-<!--        (mouseup)="isClicking=false"-->
+      <!--        <i *ngIf="getCellClass(x,y) == 'camera'" class="fa fa-video-camera" style="position:absolute; text-align: center;"></i>-->
+      <span *ngIf="!!probabilities" class="dropdown-content">Probability: {{Round(probabilities[x][y], 4)}}</span>
 
-
-      <a style="position: relative;">
-<!--        <i *ngIf="getCellClass(x,y) == 'camera'" class="fa fa-video-camera" style="position:absolute; text-align: center;"></i>-->
-        <span *ngIf="!!probabilities" class="dropdown-content">Probability: {{Round(probabilities[x][y],4)}}</span>
-      </a>
 
     </td>
   </tr>

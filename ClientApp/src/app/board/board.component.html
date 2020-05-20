@@ -6,17 +6,27 @@
 
 
 <div id="legend">
-  <label>
+
     Map size (
-    <input class="number-input" type="number" min="{{trueState?trueState[0]+1:0}}" max="14" value="{{map?map.length:0}}"
-           [(ngModel)]="mapSizeX" (change)="setMapSize()">
-  </label>
-  <label>
+    <div class="drop-btn quantity-input">
+      {{mapSizeX}}
+<!--      <input class="quantity-input drop-btn" type="number" min="{{trueState?trueState[0]+1:0}}" max="14" value="{{map?map.length:0}}"-->
+<!--             [(ngModel)]="mapSizeX" (change)="setMapSize()">-->
+      <div class="dropdown-content">
+        <input type="range" min="{{trueState?trueState[0]+2:0}}" max="14" step="1" class="slider" [(ngModel)]="mapSizeX" (change)="setMapSize()">
+      </div>
+    </div>
     ,
-    <input class="number-input" type="number" min="{{trueState?trueState[1]+1:0}}" max="14" value="{{map?map[0].length:0}}"
-           [(ngModel)]="mapSizeY" (change)="setMapSize()">
+  <div class="drop-btn quantity-input">
+    {{mapSizeY}}
+    <div class="dropdown-content">
+      <input type="range" min="{{trueState?trueState[1]+2:0}}" max="14" step="1" class="slider" [(ngModel)]="mapSizeY" (change)="setMapSize()">
+    </div>
+  </div>
+<!--    <input class="quantity-input" type="number" min="{{trueState?trueState[1]+1:0}}" max="14" value="{{map?map[0].length:0}}"-->
+<!--           [(ngModel)]="mapSizeY" (change)="setMapSize()">-->
     )
-  </label>
+
   <div class="legend-element btn" (click)="setCellChangeType('')"
        [class.cell-type-selected]="cellChangeActive && cellChangeType==''">
     <div class="color-box cell"></div>

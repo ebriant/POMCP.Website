@@ -23,6 +23,17 @@ namespace POMCP.Website.Models.Pomcp
             CamerasOrientations = camerasOrientations;
         }
         
+        public State(int x, int y, IEnumerable<Camera> cameraslist)
+        {
+            X = x;
+            Y = y;
+            CamerasOrientations = new Dictionary<Camera, double>();
+            foreach (Camera camera in cameraslist)
+            {
+                CamerasOrientations[camera] = -Math.PI / 2;
+            }
+        }
+        
         public override int GetHashCode()
         {
             const int prime = 31;

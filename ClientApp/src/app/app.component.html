@@ -1,9 +1,9 @@
 <body>
-  <app-nav-menu [gettingStarted]="gettingStartedComponent"></app-nav-menu>
+  <app-nav-menu [gettingStarted]="gettingStartedComponent" [board]="boardComponent"></app-nav-menu>
   <app-getting-started #gettingStartedComponent></app-getting-started>
 
   <div class="container">
-    <app-board></app-board>
+    <app-board #boardComponent></app-board>
   </div>
 
 </body>

@@ -1,4 +1,4 @@
-import {Component, OnInit, Inject, Input} from '@angular/core';
+import {Component, OnInit, Inject} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Camera, System} from "../map";
 
@@ -22,14 +22,17 @@ export class BoardComponent implements OnInit {
   public cellChangeType;
   public cellChangeActive = false;
 
-  public mapSizeX;
-  public mapSizeY;
+  public mapSizeX =9;
+  public mapSizeY =9;
+
+  treeDepth = 3;
+  iterations = 500;
+  gama = 0.3;
+  C = 0.5;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
 
-    let params = new HttpParams();
-    params = params.append('init', "true");
-    http.get<System>(baseUrl + 'pomcp', {params: params}).subscribe(result => {
+    http.get<System>(baseUrl + 'pomcp',).subscribe(result => {
       this.map = result.map;
       this.trueState = result.trueState;
       this.probabilities = result.probabilities;
@@ -47,7 +50,7 @@ export class BoardComponent implements OnInit {
     let params = new HttpParams();
     params = params.append('dx', dx);
     params = params.append('dy', dy);
-    this.http.get<System>(this.baseUrl + "pomcp", {params: params}).subscribe(result => {
+    this.http.get<System>(this.baseUrl + "pomcp/move", {params: params}).subscribe(result => {
       this.map = result.map;
       this.trueState = result.trueState;
       this.probabilities = result.probabilities;
@@ -58,8 +61,8 @@ export class BoardComponent implements OnInit {
     }, error => console.error(error));
   }
 
-  isInMap(x,y): boolean{
-    return (x > 0 && y > 0 && x<this.map.length-1 && y<this.map[0].length-1
+  isInMap(x, y): boolean {
+    return (x > 0 && y > 0 && x < this.map.length - 1 && y < this.map[0].length - 1
       && !(x == this.trueState[0] && y == this.trueState[1]))
   }
 
@@ -69,21 +72,19 @@ export class BoardComponent implements OnInit {
    * @param y
    */
   isChangeAllowed(x, y): boolean {
-    if (!this.cellChangeActive || !this.isInMap(x,y))
+    if (!this.cellChangeActive || !this.isInMap(x, y))
       return false;
     if (this.cellChangeType == "camera") {
       for (let camera of this.cameras) {
-        if (x == camera.x && y == camera.y){
+        if (x == camera.x && y == camera.y) {
           console.log("potato");
           return true;
         }
       }
       return this.map[x][y] == "";
-    }
-    else if (this.cellChangeType== "target"){
+    } else if (this.cellChangeType == "target") {
       return this.map[x][y] == "";
-    }
-    else {
+    } else {
       if (x == this.trueState[0] && y == this.trueState[1])
         return false;
       for (let camera of this.cameras) {
@@ -92,7 +93,6 @@ export class BoardComponent implements OnInit {
       }
       return true;
     }
-    return false;
   }
 
   /**
@@ -127,8 +127,7 @@ export class BoardComponent implements OnInit {
   setCellChangeType(typeString: string) {
     if (this.cellChangeActive && this.cellChangeType == typeString) {
       this.cellChangeActive = false;
-    }
-    else {
+    } else {
       this.cellChangeType = typeString;
       this.cellChangeActive = true;
     }
@@ -136,8 +135,8 @@ export class BoardComponent implements OnInit {
 
   setMapSize() {
     let params = new HttpParams();
-    params = params.append('dx', String(this.mapSizeX?this.mapSizeX:this.map.length));
-    params = params.append('dy', String(this.mapSizeY?this.mapSizeY:this.map[0].length));
+    params = params.append('dx', String(this.mapSizeX ? this.mapSizeX : this.map.length));
+    params = params.append('dy', String(this.mapSizeY ? this.mapSizeY : this.map[0].length));
 
     this.http.get<System>(this.baseUrl + "pomcp/map-size", {params: params}).subscribe(result => {
       this.map = result.map;

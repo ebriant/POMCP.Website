@@ -46,36 +46,16 @@
   box-shadow: 0 8px 6px -6px rgba(0, 0, 0, .5);
 }
 
-
-.quantity{
-  display:flex;
-  width:160px;
-}
-
-/* it will support chrome and firefox */
-.quantity input[type=number]::-webkit-inner-spin-button,
-.quantity input[type=number]::-webkit-outer-spin-button{
-  -webkit-appearance:none;
-}
-
-.quantity input,.quantity button{
-  width:50px;
-  padding:.5em;
-  font-size:1.2rem;
-  text-align:center;
-  font-weight:900;
-  background:white;
-  border:1px solid #aaa;
-}
-
-.quantity input{
-  border-left:none;
-  border-right:none;
-}
-
-.number-input {
-  width: 35px;
+.quantity-input {
+  width: 2ch;
   border: none;
+  text-align: center;
+  align-content: center;
+  display: inline-block;
+}
+
+.quantity-input:hover {
+  border-bottom: 2px solid #A6A6A6;
 }
 
 .btn:hover {
@@ -99,4 +79,10 @@
   margin: 0 4px;
 }
 
+.dropdown-content {
+  top: 100%;
+  left: 50%;
+  width: 80px;
+  transform: translateX(-50%);
+}
 

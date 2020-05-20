@@ -7,34 +7,35 @@ namespace POMCP.Website.Models
 {
     public class WorldBuilder
     {
-        // contains the default world
-        public static readonly World DefaultWorld = GetDefaultWorld();
-        
         /// <summary>
         /// Builds the default world
         /// </summary>
         /// <returns></returns>
-        private static World GetDefaultWorld()
+        public World GetDefaultWorld()
         {
             Map map = new Map(7,7);
             
-            map.AddObstacle(0,4,new Wall());
-            map.AddObstacle(2,4,new Wall());
-            map.AddObstacle(3,4,new Wall());
+            map.AddObstacle(6,4,new Wall());
             map.AddObstacle(4,4,new Wall());
-            map.AddObstacle(4,3,new Wall());
-            map.AddObstacle(4,2,new Wall());
-            map.AddObstacle(4,0,new Wall());
+            map.AddObstacle(3,4,new Wall());
+            map.AddObstacle(2,4,new Wall());
+            map.AddObstacle(2,3,new Wall());
+            map.AddObstacle(2,2,new Wall());
+            map.AddObstacle(2,0,new Wall());
             
             World world = new World(map);
 
-            Camera camera = new AngularCamera(6,6);
+            Camera camera = new AngularCamera(0,6);
             world.AddCamera(camera);
 
             return world;
         }
 
-        private World GetMuseumWorld()
+        /// <summary>
+        /// Build a template world
+        /// </summary>
+        /// <returns></returns>
+        public World GetMuseumWorld()
         {
             Map map = new Map(11,11);
             
@@ -65,8 +66,17 @@ namespace POMCP.Website.Models
             map.AddObstacle(6,5,new Glass());
 
             World world = new World(map);
-
             Camera camera = new AngularCamera(5,7);
+            world.AddCamera(camera);
+            return world;
+        }
+        
+        public World GetEmptyWorld()
+        {
+            Map map = new Map(8,8);
+            World world = new World(map);
+
+            Camera camera = new AngularCamera(0,7);
             world.AddCamera(camera);
 
             return world;

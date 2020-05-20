@@ -61,31 +61,13 @@ namespace POMCP.Website.Models
     
     public class System
     {
-        public static System Instance = GetStartingSystem();
-
-        public static System GetStartingSystem()
-        {
-            World world = WorldBuilder.DefaultWorld;
-            Distribution<State> d = new Distribution<State>();
-            Dictionary<Camera, double> camerasOrientations = new Dictionary<Camera, double>();
-            
-            foreach (Camera camera in world.Cameras)
-            {
-                camerasOrientations[camera] = -Math.PI / 2;
-            }
-            
-            System s = new System(world, new State(0, 0, camerasOrientations));
-            return s;
-        }
-
-        private World World { get; }
+        
+        private World World { get; set; }
 
         private readonly MarkovModel _model;
 
         private Distribution<State> CurrentDistribution { get; set; }
-
         
-
         private State TrueState { get; set; }
 
         // Number of iteration perform for the building of a sampling tree
@@ -97,7 +79,7 @@ namespace POMCP.Website.Models
         // 
         public float Gama { get; set; }= 0.3f;
         
-        // exploration parameter of the UCB searching,
+        // Exploration parameter of the UCB searching,
         public float C { get; set; } = 1.4f;
         
         private int MaxMapSize { get; } = 12;
@@ -109,7 +91,7 @@ namespace POMCP.Website.Models
             _model = new MarkovModel(World);
             InitializeSystem();
         }
-        
+
         /// <summary>
         /// Create a system given the system view. This is used to restore the System for each Session
         /// </summary>
@@ -126,8 +108,9 @@ namespace POMCP.Website.Models
                 World.AddCamera(camera);
                 camerasOrientation[camera] = cameraProp.Orientation;
             }
-            // Remove if possible
+            // To remove if possible
             World.InitializeCameras();
+            
             _model = new MarkovModel(World);
 
             TrueState = new State(systemView.TrueState[0]-1,systemView.TrueState[1]-1, camerasOrientation);
@@ -417,13 +400,9 @@ namespace POMCP.Website.Models
 
         public void ChangeMapSize(int dx, int dy)
         {
-            dx = Math.Min(MaxMapSize, dx);
-            dy = Math.Min(MaxMapSize, dy);
-            
-            dx = Math.Max(TrueState.X+1 , dx);
-            dy = Math.Max(TrueState.Y+1, dy);
-            
-            
+            dx = Math.Clamp(dx, TrueState.X + 1, MaxMapSize);
+            dy = Math.Clamp(dy, TrueState.Y + 1, MaxMapSize);
+
             World.Map.ResizeMap(dx, dy);
             
             foreach (Camera camera in World.Cameras.ToArray())
@@ -434,5 +413,6 @@ namespace POMCP.Website.Models
             
             InitializeSystem();
         }
+        
     }
 }

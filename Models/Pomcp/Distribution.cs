@@ -3,13 +3,12 @@ using System.Collections.Generic;
 
 namespace POMCP.Website.Models.Pomcp
 {
-	
 	public class Distribution<T>
 	{
 		
 		public Dictionary<T, double> Prob { get; private set; }
 
-		[NonSerialized] private readonly Random rnd = new Random();
+		private Random rnd = new Random();
 
 		
 		public double GetProba(T element)

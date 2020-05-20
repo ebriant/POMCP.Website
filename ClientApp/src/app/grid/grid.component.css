@@ -18,5 +18,16 @@
 }
 
 
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: rgba(255,255,255, 0.85);
+  min-width: 16ch;
+  min-height: 1.2em;
+  z-index: 2;
+  transform: translate(-50%, 0);
+  top: -80%;
+  pointer-events: none;
+}
 
 

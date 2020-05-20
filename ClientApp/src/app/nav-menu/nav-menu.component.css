@@ -28,8 +28,44 @@ html {
   background-color: rgb(255,255,255);
   color: #23303B;
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .5);
-  pointer-events: none;
+  pointer-events: initial;
+  width: 400px;
+  position: absolute;
   top:auto;
   left: auto;
-  max-width: 500px;
+}
+
+
+.help-tooltip {
+  display: inline-block;
+  padding:2px 5px;
+}
+
+
+.slider {
+  margin: .5rem 0;
+  width: 100px;
+  background: #F2F2F2;
+}
+
+.slider::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  background: #AED3F2;
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #AED3F2;
+}
+
+.param-display {
+  display: inline-block;
+  min-width: 5ch;
+  margin: 0 .5em;
+}
+
+.slider-container{
+  text-align: center;
 }

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using POMCP.Website.Models;
+using POMCP.Website.Models.Environment;
+using POMCP.Website.Models.Pomcp;
 
 namespace POMCP.Website.Controllers
 {
@@ -12,7 +14,6 @@ namespace POMCP.Website.Controllers
     [Route("[controller]")]
     public class PomcpController : Controller
     {
-        
         public const string SessionKeySystem = "_System";
         private readonly ILogger<PomcpController> _logger;
 
@@ -22,40 +23,47 @@ namespace POMCP.Website.Controllers
         }
 
         [HttpGet]
-        public SystemView Get([FromQuery] int? dx, [FromQuery] int? dy, [FromQuery] bool? init = false)
+        public SystemView Get([FromQuery] int? index)
         {
-            // Random random = new Random();
-            // const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            // string test = new string(Enumerable.Repeat(chars, 8)
-            //     .Select(s => s[random.Next(s.Length)]).ToArray());
-            // HttpContext.Session.SetString("test", test);
-
+            WorldBuilder wb = new WorldBuilder();
             Models.System s;
-            if (init != null && (bool) !init)
+            World world;
+            State initialState;
+            switch (index)
             {
-                string testString = HttpContext.Session.GetString("test");
-                string systemString = HttpContext.Session.GetString(SessionKeySystem);
-                SystemView systemView = JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
-                s = new Models.System(systemView);
-                s.AdvanceSystem(dx, dy);
-                // Models.System.Instance.AdvanceSystem(dx, dy);
+                case 1:
+                    world = wb.GetMuseumWorld();
+                    initialState = new State(0, 0, world.Cameras);
+                    s = new Models.System(world, initialState);
+                    break;
+                case 2:
+                    world = wb.GetEmptyWorld();
+                    initialState = new State(0, 0, world.Cameras);
+                    s = new Models.System(world, initialState);
+                    break;
+                default:
+                    world = wb.GetDefaultWorld();
+                    initialState = new State(0, 0, world.Cameras);
+                    s = new Models.System(world, initialState);
+                    break;
             }
-            else
-                s = Models.System.GetStartingSystem();
 
+            
 
             SystemView newSystemView = s.GetSystemView();
-            HttpContext.Session.SetString("test", "J'aime les petit pois");
-            string syst = JsonSerializer.Serialize(newSystemView);
             HttpContext.Session.SetString(SessionKeySystem, JsonSerializer.Serialize(newSystemView));
             return newSystemView;
+            
+            
+            
         }
 
         [HttpGet]
         [Route("modify-cell")]
         public SystemView ModifyCell([FromQuery] int x, [FromQuery] int y, [FromQuery] string cellType)
         {
-            SystemView systemView = JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
+            SystemView systemView =
+                JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
             Models.System s = new Models.System(systemView);
             s.ModifyCell(x - 1, y - 1, cellType);
             SystemView newSystemView = s.GetSystemView();
@@ -67,7 +75,8 @@ namespace POMCP.Website.Controllers
         [Route("map-size")]
         public SystemView ChangeMapSize([FromQuery] int dx, [FromQuery] int dy)
         {
-            SystemView systemView = JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
+            SystemView systemView =
+                JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
             Models.System s = new Models.System(systemView);
             s.ChangeMapSize(dx - 2, dy - 2);
             SystemView newSystemView = s.GetSystemView();
@@ -75,20 +84,17 @@ namespace POMCP.Website.Controllers
             return newSystemView;
         }
 
-        [HttpPost]
-        [Route("tree-depth")]
-        public void SetTreeDepth([FromQuery] int value)
-        {
-            Models.System.Instance.TreeDepth = value;
-        }
-
         [HttpGet]
-        [Route("test")]
-        public string GetTest()
+        [Route("move")]
+        public SystemView MoveTarget([FromQuery] int? dx, [FromQuery] int? dy)
         {
-            string t = HttpContext.Session.GetString("test");
-            HttpContext.Session.SetString("test", t);
-            return t;
+            SystemView systemView =
+                JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
+            Models.System s = new Models.System(systemView);
+            s.AdvanceSystem(dx, dy);
+            SystemView newSystemView = s.GetSystemView();
+            HttpContext.Session.SetString(SessionKeySystem, JsonSerializer.Serialize(newSystemView));
+            return newSystemView;
         }
     }
 }
