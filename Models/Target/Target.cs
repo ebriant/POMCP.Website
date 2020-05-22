@@ -1,8 +1,5 @@
-﻿﻿using System;
- using System.Collections.Generic;
- using POMCP.Website.Models.Environment;
- using POMCP.Website.Models.Environment.Cells;
- using POMCP.Website.Models.Pomcp;
+﻿using System.Collections.Generic;
+using POMCP.Website.Models.Pomcp;
 
  namespace POMCP.Website.Models.Target
 {

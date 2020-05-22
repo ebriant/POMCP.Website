@@ -1,7 +1,6 @@
 ﻿using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
 using POMCP.Website.Models.Environment.Cells;
-using POMCP.Website.Models.Target;
 
 namespace POMCP.Website.Models
 {

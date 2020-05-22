@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using POMCP.Website.Models.Cameras;
 using POMCP.Website.Models.Environment;
 using POMCP.Website.Models.Environment.Cells;
@@ -71,16 +70,10 @@ namespace POMCP.Website.Models
         private State TrueState { get; set; }
 
         // Number of iteration perform for the building of a sampling tree
-        public int TreeSamplesCount { get; set; } = 500;
 
         // Maximum depth of a tree
-        public int TreeDepth { get; set; } = 3;
-        
-        // 
-        public float Gama { get; set; }= 0.3f;
         
         // Exploration parameter of the UCB searching,
-        public float C { get; set; } = 1.4f;
         
         private int MaxMapSize { get; } = 12;
 
@@ -98,7 +91,6 @@ namespace POMCP.Website.Models
         /// <param name="systemView"></param>
         public System(SystemView systemView)
         {
-            
             World = new World(systemView.Map);
             Dictionary<Camera, double> camerasOrientation = new Dictionary<Camera, double>();
             foreach (CameraProperties cameraProp in systemView.Cameras)
@@ -125,7 +117,6 @@ namespace POMCP.Website.Models
                 }
             }
             CurrentDistribution = d;
-            
         }
 
         private void InitializeSystem()
@@ -135,21 +126,21 @@ namespace POMCP.Website.Models
             CurrentDistribution.SetProba(TrueState, 1);
         }
 
-        private ActionNode GetBestAction()
+        private ActionNode GetBestAction(int treeSamplesCount, int treeDepth, float gama, float c)
         {
             SamplingTree tree = new SamplingTree(
                 CurrentDistribution, 
                 _model,
-                TreeSamplesCount,
-                TreeDepth,
-                Gama,
-                C);
+                treeSamplesCount,
+                treeDepth,
+                gama,
+                c);
             return tree.GetBestAction();
         }
 
-        public void AdvanceSystem(int? dx, int? dy)
+        public void AdvanceSystem(int? dx, int? dy, int treeSamplesCount, int treeDepth, float gama, float c)
         {
-            Action action = GetBestAction().Action;
+            Action action = GetBestAction(treeSamplesCount, treeDepth, gama, c).Action;
 
             if (dx != null && dy != null && World.Map.IsCellFree((int) (TrueState.X + dx), (int) (TrueState.Y + dy)))
             {
@@ -163,18 +154,17 @@ namespace POMCP.Website.Models
                 TrueState = _model.ApplyTransition(TrueState, action).Draw();
             }
 
-
             Distribution<Observation> observation = new Distribution<Observation>();
-            foreach (Camera c in World.Cameras)
+            foreach (Camera camera in World.Cameras)
             {
                 if (observation.Prob.Count == 0)
                 {
-                    observation = c.GetObservation(TrueState);
+                    observation = camera.GetObservation(TrueState);
                 }
                 else
                 {
                     observation =
-                        _model.CrossDistributions(observation, c.GetObservation(TrueState));
+                        _model.CrossDistributions(observation, camera.GetObservation(TrueState));
                 }
             }
 

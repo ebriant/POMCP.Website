@@ -47,9 +47,14 @@ export class BoardComponent implements OnInit {
 
   public updateSystem(dx, dy) {
     this.isMoving = true;
+    this.cellChangeActive = false;
     let params = new HttpParams();
     params = params.append('dx', dx);
     params = params.append('dy', dy);
+    params = params.append('treeSamplesCount', String(this.iterations));
+    params = params.append('treeDepth', String(this.treeDepth));
+    params = params.append('gama', String(this.gama));
+    params = params.append('c', String(this.C));
     this.http.get<System>(this.baseUrl + "pomcp/move", {params: params}).subscribe(result => {
       this.map = result.map;
       this.trueState = result.trueState;

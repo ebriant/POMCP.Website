@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -86,12 +85,22 @@ namespace POMCP.Website.Controllers
 
         [HttpGet]
         [Route("move")]
-        public SystemView MoveTarget([FromQuery] int? dx, [FromQuery] int? dy)
+        public SystemView MoveTarget([FromQuery] int? dx, 
+            [FromQuery] int? dy, 
+            [FromQuery] int treeSamplesCount,
+            [FromQuery] int treeDepth,
+            [FromQuery] float gama,
+            [FromQuery] float c)
         {
+            treeSamplesCount = Math.Clamp(treeSamplesCount, 10, 1000);
+            treeDepth = Math.Clamp(treeDepth, 1, 5);
+            gama = Math.Clamp(gama, 0, 1);
+            c = Math.Clamp(c, 0, 1);
+            
             SystemView systemView =
                 JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
             Models.System s = new Models.System(systemView);
-            s.AdvanceSystem(dx, dy);
+            s.AdvanceSystem(dx, dy, treeSamplesCount, treeDepth, gama, c);
             SystemView newSystemView = s.GetSystemView();
             HttpContext.Session.SetString(SessionKeySystem, JsonSerializer.Serialize(newSystemView));
             return newSystemView;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using POMCP.Website.Models.Pomcp;
 
 namespace POMCP.Website.Models.Cameras

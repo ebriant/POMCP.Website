@@ -4,6 +4,10 @@
   transform:rotate(45deg);         /* Standard syntax */
 }
 
+#control {
+  margin: 0 auto;
+}
+
 #control button {
   background-color: transparent;
   border: 0;
@@ -21,6 +25,10 @@
 
 #control button:hover:enabled i {
   color: #385D84;
+}
+
+#control button:active:hover i {
+  color: #E77557;
 }
 
 .grid-title {

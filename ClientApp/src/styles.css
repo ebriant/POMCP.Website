@@ -108,7 +108,7 @@ body {
   color: #F2F2F2 !important;
 }
 
-.navbar .active a:hover {
+.navbar .active a:hover, .active:hover {
   color: #AED3F2;
 }
 

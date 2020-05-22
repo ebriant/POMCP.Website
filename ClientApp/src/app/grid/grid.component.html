@@ -25,7 +25,7 @@
         (click)="cellChanged.emit([x,y])">
 
       <!--        <i *ngIf="getCellClass(x,y) == 'camera'" class="fa fa-video-camera" style="position:absolute; text-align: center;"></i>-->
-      <span *ngIf="!!probabilities" class="dropdown-content">Probability: {{Round(probabilities[x][y], 4)}}</span>
+      <span *ngIf="hasProbability(x,y)" class="dropdown-content">Probability: {{Round(probabilities[x][y], 4)}}</span>
 
 
     </td>

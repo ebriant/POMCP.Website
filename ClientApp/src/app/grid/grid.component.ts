@@ -131,6 +131,13 @@ export class GridComponent implements OnInit {
   }
 
 
+  hasProbability(x,y): boolean {
+    if (!this.probabilities) {
+      return false;
+    }
+    return (x > 0 && y > 0 && x < this.probabilities.length - 1 && y < this.probabilities[0].length - 1);
+  }
+
 }
 
 
