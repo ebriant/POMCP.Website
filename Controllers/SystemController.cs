@@ -32,17 +32,17 @@ namespace POMCP.Website.Controllers
             {
                 case 1:
                     world = wb.GetMuseumWorld();
-                    initialState = new State(0, 0, world.Cameras);
+                    initialState = new State(0, 0, 0, 0, world.Cameras);
                     s = new Models.System(world, initialState);
                     break;
                 case 2:
                     world = wb.GetEmptyWorld();
-                    initialState = new State(0, 0, world.Cameras);
+                    initialState = new State(0, 0, 0, 0, world.Cameras);
                     s = new Models.System(world, initialState);
                     break;
                 default:
                     world = wb.GetDefaultWorld();
-                    initialState = new State(0, 0, world.Cameras);
+                    initialState = new State(0, 0, 0, 0, world.Cameras);
                     s = new Models.System(world, initialState);
                     break;
             }
@@ -104,6 +104,26 @@ namespace POMCP.Website.Controllers
             SystemView newSystemView = s.GetSystemView();
             HttpContext.Session.SetString(SessionKeySystem, JsonSerializer.Serialize(newSystemView));
             return newSystemView;
+        }
+
+        public Models.System GetSystem()
+        {
+            Models.System s;
+            string systemString = HttpContext.Session.GetString(SessionKeySystem);
+            if (systemString != null)
+            {
+                SystemView systemView =
+                                JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
+                s = new Models.System(systemView);
+            }
+            else
+            {
+                World world = new WorldBuilder().GetMuseumWorld();
+                State initialState = new State(0, 0, 0, 0, world.Cameras);
+                s = new Models.System(world, initialState);
+            }
+
+            return s;
         }
     }
 }

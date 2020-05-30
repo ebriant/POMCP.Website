@@ -12,25 +12,33 @@ namespace POMCP.Website.Models.Pomcp
         public int X { get; set; }
 
         public int Y { get; set; }
+        
+        public int Dx { get; set; }
+
+        public int Dy { get; set; }
 
         public Dictionary<Camera, double> CamerasOrientations { get; }
 
 
-        public State(int x, int y, Dictionary<Camera, double> camerasOrientations)
+        public State(int x, int y, int dx, int dy, Dictionary<Camera, double> camerasOrientations)
         {
             X = x;
             Y = y;
+            Dx = dx;
+            Dy = dy;
             CamerasOrientations = camerasOrientations;
         }
         
-        public State(int x, int y, IEnumerable<Camera> cameraslist)
+        public State(int x, int y, int dx, int dy, IEnumerable<Camera> cameraslist)
         {
             X = x;
             Y = y;
+            Dx = dx;
+            Dy = dy;
             CamerasOrientations = new Dictionary<Camera, double>();
             foreach (Camera camera in cameraslist)
             {
-                CamerasOrientations[camera] = -Math.PI / 2;
+                CamerasOrientations[camera] = 0;
             }
         }
         

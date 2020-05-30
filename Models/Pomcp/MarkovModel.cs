@@ -26,7 +26,7 @@ namespace POMCP.Website.Models.Pomcp
                 for (int j = -1; j <= 1; j++)
                 {
                     if (World.Map.IsCellFree(state.X + i, state.Y + j))
-                        statesList.Add(new State(state.X + i, state.Y + j, state.CamerasOrientations));
+                        statesList.Add(new State(state.X + i, state.Y + j, i, j, state.CamerasOrientations));
                 }
             }
             return statesList;
@@ -127,7 +127,7 @@ namespace POMCP.Website.Models.Pomcp
             {
                 orientations[keyValuePair.Key] = keyValuePair.Value + action.OrientationsChanges[keyValuePair.Key];
             }
-            return new State(state.X, state.Y, orientations);
+            return new State(state.X, state.Y, state.Dx, state.Dy, orientations);
         }
 
 
