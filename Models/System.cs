@@ -8,66 +8,15 @@ using Action = POMCP.Website.Models.Pomcp.Action;
 
 namespace POMCP.Website.Models
 {
-    [Serializable]
-    public struct CameraProperties
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public double Orientation { get; set; }
-        public double Fov { get; set; }
-        
-        
-        public CameraProperties(int x, int y, double orientation, double fov)
-        {
-            X = x;
-            Y = y;
-            Orientation = orientation;
-            Fov = fov;
-        }
-
-        public override string ToString()
-        {
-            return "Camera. X:" + X + ", Y: " + Y + ", Ori: " + Orientation + ", FOV: " + Fov;
-        }
-    }
-    
-    
-    /// <summary>
-    /// Structure that represents the current state of the system in an easy processable way for the view
-    /// </summary>
-    [Serializable]
-    public struct SystemView
-    {
-        public string[][] Map { get; set; }
-        public int[] TrueState { get; set; }
-        public CameraProperties[] Cameras { get; set; }
-        public double[][] Probabilities { get; set; }
-        public int[][] CamerasVision { get; set; }
-        public bool[][] MovingOptions { get; set; }
-
-        public SystemView(string[][] map, int[] trueState, CameraProperties[] cameras, double[][] probabilities,
-            int[][] camerasVision, bool[][] movingOptions)
-        {
-            Map = map;
-            TrueState = trueState;
-            Cameras = cameras;
-            Probabilities = probabilities;
-            CamerasVision = camerasVision;
-            MovingOptions = movingOptions;
-        }
-    }
-
-    
     public class System
     {
-        
-        private World World { get; set; }
+        public World World { get; set; }
 
         private readonly MarkovModel _model;
 
-        private Distribution<State> CurrentDistribution { get; set; }
-        
-        private State TrueState { get; set; }
+        public Distribution<State> CurrentDistribution { get; set; }
+
+        public State TrueState { get; set; }
 
         // Number of iteration perform for the building of a sampling tree
 
