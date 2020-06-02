@@ -103,7 +103,7 @@
               <div class="drop-btn help-tooltip">
                 <i class="far fa-question-circle fa-sm"></i>
                 <div class="dropdown-content">
-                  The number of iterations performed to create the searching tree corresponding to the number of
+                  The number of iterations performed to create the searching tree, i.e. the number of
                   possible scenerios that are simulated
                 </div>
               </div>
@@ -120,9 +120,9 @@
               <div class="drop-btn help-tooltip">
                 <i class="far fa-question-circle fa-sm"></i>
                 <div class="dropdown-content">
-                  The value multiplier of the value of each node. A value of 1 means the imediate rewards are as
-                  important as the distant ones, while a value of 0 means only the the imediate rewards have an impact
-                  on the decision process
+                  The reward multiplier for each future time step. A value of 1 means the future rewards are as
+                  important as the imediate ones, while a value of 0 means only the the imediate rewards have an impact
+                  on the decision process.
                 </div>
               </div>
             </a>
@@ -137,12 +137,10 @@
               <div class="drop-btn help-tooltip">
                 <i class="far fa-question-circle fa-sm"></i>
                 <div class="dropdown-content">
-
-                  This parameter represent the trade off between choosing the actions that seems to yield the best
-                  result, versus choosing a seemignly less rewarding one to explore, with the potential that the
-                  long term reward would be intersting.
-                  <a href="https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation" target="_blank">Wikipedia</a>
-
+                  This parameter represent the trade off in the tree building process between choosing the actions
+                  that seems to yield the best result, versus choosing a seemignly less rewarding one to explore,
+                  with the potential that the long term reward or unexplored scenarios would be intersting.
+                  <a class="link" href="https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation" target="_blank">More Information.</a>
                 </div>
               </div>
             </a>

@@ -46,41 +46,25 @@ namespace POMCP.Website.Controllers
                     s = new Models.System(world, initialState);
                     break;
             }
-
-            
-
-            SystemView newSystemView = s.GetSystemView();
-            HttpContext.Session.SetString(SessionKeySystem, JsonSerializer.Serialize(newSystemView));
-            return newSystemView;
-            
-            
-            
+            return SetSystem(s);
         }
 
         [HttpGet]
         [Route("modify-cell")]
         public SystemView ModifyCell([FromQuery] int x, [FromQuery] int y, [FromQuery] string cellType)
         {
-            SystemView systemView =
-                JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
-            Models.System s = new Models.System(systemView);
+            Models.System s = GetSystem();
             s.ModifyCell(x - 1, y - 1, cellType);
-            SystemView newSystemView = s.GetSystemView();
-            HttpContext.Session.SetString(SessionKeySystem, JsonSerializer.Serialize(newSystemView));
-            return newSystemView;
+            return SetSystem(s);
         }
 
         [HttpGet]
         [Route("map-size")]
         public SystemView ChangeMapSize([FromQuery] int dx, [FromQuery] int dy)
         {
-            SystemView systemView =
-                JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
-            Models.System s = new Models.System(systemView);
+            Models.System s = GetSystem();
             s.ChangeMapSize(dx - 2, dy - 2);
-            SystemView newSystemView = s.GetSystemView();
-            HttpContext.Session.SetString(SessionKeySystem, JsonSerializer.Serialize(newSystemView));
-            return newSystemView;
+            return SetSystem(s);
         }
 
         [HttpGet]
@@ -97,10 +81,33 @@ namespace POMCP.Website.Controllers
             gama = Math.Clamp(gama, 0, 1);
             c = Math.Clamp(c, 0, 1);
             
-            SystemView systemView =
-                JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
-            Models.System s = new Models.System(systemView);
+            Models.System s = GetSystem();
             s.AdvanceSystem(dx, dy, treeSamplesCount, treeDepth, gama, c);
+            return SetSystem(s);
+        }
+
+        public Models.System GetSystem()
+        {
+            Models.System s;
+            string systemString = HttpContext.Session.GetString(SessionKeySystem);
+            if (systemString != null)
+            {
+                SystemView systemView =
+                                JsonSerializer.Deserialize<SystemView>(HttpContext.Session.GetString(SessionKeySystem));
+                s = new Models.System(systemView);
+            }
+            else
+            {
+                World world = new WorldBuilder().GetMuseumWorld();
+                State initialState = new State(0, 0, world.Cameras);
+                s = new Models.System(world, initialState);
+            }
+
+            return s;
+        }
+
+        public SystemView SetSystem(Models.System s)
+        {
             SystemView newSystemView = s.GetSystemView();
             HttpContext.Session.SetString(SessionKeySystem, JsonSerializer.Serialize(newSystemView));
             return newSystemView;
