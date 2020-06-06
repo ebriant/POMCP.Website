@@ -6,7 +6,9 @@ namespace POMCP.Website.Models.Cameras
 {
     public class AngularCamera : Camera
     {
-        public AngularCamera(int x, int y) : base(x, y) {}
+        public AngularCamera(int x, int y) : base(x, y)
+        {
+        }
 
         /// <summary>
         /// Return the cameras's field of view using the angle
@@ -24,7 +26,7 @@ namespace POMCP.Website.Models.Cameras
             };
             // tolerance on the cosinus
             double cosTolerance = Math.Cos(FOV);
-            
+
             // for each cell
             for (int i = 0; i < result.GetLength(0); i++)
             {
@@ -51,6 +53,7 @@ namespace POMCP.Website.Models.Cameras
                     }
                 }
             }
+
             return result;
         }
 
@@ -67,9 +70,8 @@ namespace POMCP.Website.Models.Cameras
 
         public override List<double> GetActions()
         {
-
             List<double> actions = new List<double>();
-            for (int i = - 1; i < 2; i++)
+            for (int i = -1; i < 2; i++)
             {
                 actions.Add(Math.PI * i / 4);
             }
@@ -80,13 +82,19 @@ namespace POMCP.Website.Models.Cameras
         // public override double GetValue(State state)
         // {
         //     bool[,] vision = GetVision(state.CamerasOrientations[this]);
-        //     double count = 0;
-        //     foreach (bool b in vision)
-        //     {
-        //         if (b) count += 1;
-        //     }
         //
-        //     return vision[state.X, state.Y] ? 1 : 0 + count / (vision.GetLength(0) * vision.GetLength(1));
+        //     if (vision[state.X, state.Y])
+        //         return 1;
+        //     else
+        //     {
+        //         double count = 0;
+        //         foreach (bool b in vision)
+        //         {
+        //             if (b) count += 1;
+        //         }
+        //
+        //         return 0.5 * count / vision.GetLength(0) * vision.GetLength(1);
+        //     }
         // }
     }
 }

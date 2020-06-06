@@ -12,10 +12,8 @@ namespace POMCP.Website.Models.Cameras
 	    public double FOV { get; } = Math.PI / 8;
 
 	    public bool[,] VisibleCells;
-	    
-	    
-	    
-        public Camera(int x, int y)
+
+	    public Camera(int x, int y)
         {
 	        X = x;
 	        Y = y;
