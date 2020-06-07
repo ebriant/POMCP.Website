@@ -26,7 +26,7 @@
 
 
   '<h4>Exploring the world</h4>' +
-  '<p>You are in control of the character! Try moving around the map using the directional arrows on the screen and see if the cameras can follow you even when after you are hidden. In a normal POMDP situation, the system would evolve on its own using defined rules, the manual control just adds some interactivity. To simulate the evolution of process, the camera agent assumes the target moves at random, which is not exactly true but should be enough to follow you around</p>' +
+  '<p>You are in control of the character! Try moving around the map using the directional arrows on the screen and see if the cameras can follow you even when after you are hidden. In a normal POMDP situation, the system would evolve on its own using defined rules, the manual control just adds some interactivity. To simulate the evolution of process, the camera agent assumes the target moves at random: this is not a flawless approximation but should be enough to follow you around in most cases</p>' +
   '<img src="movement.jpg" alt="Movement arrows">' +
   '<div> <i class="fa fa-arrow-circle-o-right"></i> Move in the direction of the arrow <i class="fa fa-circle-o"></i> Stay put (one time step will pass)</div>',
 
