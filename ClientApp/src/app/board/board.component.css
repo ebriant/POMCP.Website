@@ -60,6 +60,7 @@
   text-align: center;
   align-content: center;
   display: inline-block;
+  font-weight: bold;
 }
 
 .quantity-input:hover {
@@ -90,7 +91,17 @@
 .dropdown-content {
   top: 100%;
   left: 50%;
-  width: 80px;
+  width: max-content;
   transform: translateX(-50%);
 }
 
+.dropdown-content input {
+  width: 80px;
+}
+
+
+.dropdown-content img {
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+}
