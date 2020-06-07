@@ -1,4 +1,4 @@
-import {Component, OnInit, Inject} from '@angular/core';
+import {Component, OnInit, Inject, HostListener} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Camera, System} from "../map";
 
@@ -152,5 +152,35 @@ export class BoardComponent implements OnInit {
       this.movingOptions = result.movingOptions;
     }, error => console.error(error));
   }
+
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    console.log(event.key);
+    switch (event.key) {
+      case "ArrowLeft":
+        if (this.movingOptions[0][1]){
+          this.updateSystem(-1,0);
+        }
+        break;
+      case "ArrowRight":
+        if (this.movingOptions[2][1]){
+          this.updateSystem(1,0);
+        }
+        break;
+      case "ArrowUp":
+        if (this.movingOptions[1][2]){
+          this.updateSystem(0,-1);
+        }
+        break;
+      case "ArrowDown":
+        if (this.movingOptions[1][2]){
+          this.updateSystem(0,1);
+        }
+        break;
+    }
+  }
+
+
 
 }
