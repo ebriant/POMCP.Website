@@ -1,6 +1,6 @@
 ﻿export const MESSAGE = [
   '<h4>Welcome</h4>' +
-  '<p>This application demonstrates a simple application of a Partially Observable Monte-Carlo Planning (POMCP) method applied to a simple situation: a series of cameras following a person in a partially occluded environment. This situation is simplified down to a two-dimensional grid and is modeled by a partially observable Markov decision process.</p>' +
+  '<p>This website demonstrates a simple application of a Partially Observable Monte-Carlo Planning (POMCP) method applied to a simple situation: a series of cameras following a person in a partially occluded environment. This situation is simplified down to a two-dimensional grid and is modeled by a partially observable Markov decision process.</p>' +
   '<img src="demo.gif" alt="Demo gif">' +
   '<div><div class="cell camera node"></div> Camera <div class="cell target node"></div> Target <div class="cell wall node"></div> Wall</div></div>',
 
